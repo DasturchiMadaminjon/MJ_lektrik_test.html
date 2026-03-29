@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Ilovalar Katalogi - Real-time Search</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #06b6d4;
+    --secondary: #8b5cf6;
+    --bg: #020817;
+    --card-bg: rgba(255,255,255,0.03);
+    --card-border: rgba(255,255,255,0.08);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(6,182,212,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.03) 0%, transparent 70%);
+    animation: bgPulse 8s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes bgPulse {
+    0% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.05) rotate(2deg); }
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(6,182,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6,182,212,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.2);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    transition: all .4s;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    letter-spacing: -2px;
+  }
+
+  .neon {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(6,182,212,0.4));
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .search-wrap {
+    position: relative;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .search-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(139,92,246,0.3));
+    filter: blur(12px);
+    opacity: 0;
+    transition: opacity .4s;
+    pointer-events: none;
+  }
+
+  .search-wrap:focus-within .search-glow { opacity: 1; }
+
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    transition: border-color .3s;
+    overflow: hidden;
+  }
+
+  .search-wrap:focus-within .search-box { border-color: rgba(6,182,212,0.5); }
+
+  .search-icon {
+    padding: 0 16px;
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: all .3s;
+  }
+
+  .search-icon.spinning {
+    animation: spin 1s linear infinite;
+    color: var(--primary);
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  #searchInput {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 17px;
+    padding: 18px 0;
+  }
+
+  #searchInput::placeholder { color: rgba(148,163,184,0.5); }
+
+  .clear-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 8px 16px;
+    font-size: 18px;
+    display: none;
+    transition: color .2s;
+  }
+
+  .clear-btn:hover { color: var(--text); }
+  .clear-btn.visible { display: block; }
+
+  .ai-toggle-wrap {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .ai-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    transition: all .35s cubic-bezier(0.34,1.56,0.64,1);
+    letter-spacing: 0.2px;
+  }
+
+  .ai-toggle-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.18);
+    transform: translateY(-1px);
+  }
+
+  .ai-toggle-btn.active {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    box-shadow: 0 0 30px rgba(6,182,212,0.45), 0 4px 20px rgba(6,182,212,0.2);
+    transform: translateY(-2px);
+  }
+
+  .ai-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  .ai-toggle-btn.active .ai-dot {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 48px 0;
+  }
+
+  @media (max-width: 640px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 28px 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: transform .3s, border-color .3s;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(6,182,212,0.2);
+  }
+
+  .stat-icon { font-size: 32px; margin-bottom: 12px; }
+  .stat-number { font-size: 2rem; font-weight: 800; margin-bottom: 6px; transition: all .4s; }
+  .stat-label { font-size: 13px; color: var(--muted); }
+
+  .filters {
+    position: sticky;
+    top: 12px;
+    z-index: 100;
+    background: rgba(2,8,23,0.85);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 16px 20px;
+    backdrop-filter: blur(24px);
+    margin-bottom: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .cat-scroll { flex: 1; overflow-x: auto; scrollbar-width: none; }
+  .cat-scroll::-webkit-scrollbar { display: none; }
+  .cat-pills { display: flex; gap: 8px; width: max-content; }
+
+  .pill {
+    padding: 8px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    transition: all .25s;
+    white-space: nowrap;
+  }
+
+  .pill:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .pill.active {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 16px rgba(6,182,212,0.4);
+  }
+
+  .price-toggle {
+    display: flex;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+
+  .price-btn {
+    padding: 8px 16px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    transition: all .25s;
+  }
+
+  .price-btn.active { background: rgba(255,255,255,0.1); color: var(--text); }
+
+  .ai-banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    background: rgba(6,182,212,0.07);
+    border: 1px solid rgba(6,182,212,0.18);
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--primary);
+    animation: fadeIn .4s ease;
+  }
+
+  .ai-banner.visible { display: flex; }
+  .ai-banner-icon { font-size: 20px; flex-shrink: 0; }
+  .ai-banner-text { flex: 1; }
+  .ai-banner-text strong { color: #fff; }
+
+  .error-banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #f87171;
+    animation: fadeIn .4s ease;
+  }
+
+  .error-banner.visible { display: flex; }
+
+  .retry-btn {
+    margin-left: auto;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.2);
+    color: #f87171;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+
+  .retry-btn:hover { background: rgba(239,68,68,0.25); }
+
+  .results-info {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    padding-left: 4px;
+    min-height: 20px;
+  }
+
+  .results-info span { color: var(--primary); font-weight: 700; }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .skeleton-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .skel-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .skel-box { width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+  .skel-lines { flex: 1; }
+  .skel-line { height: 12px; background: rgba(255,255,255,0.08); border-radius: 6px; margin-bottom: 8px; }
+  .skel-line.short { width: 55%; }
+  .skel-line.med { width: 75%; }
+  .skel-line.full { width: 100%; }
+  .skel-btn { height: 40px; background: rgba(255,255,255,0.06); border-radius: 12px; margin-top: 16px; }
+
+  .tool-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    animation: fadeIn .4s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .tool-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(6,182,212,0.25);
+    box-shadow: 0 0 30px rgba(6,182,212,0.12);
+  }
+
+  .tool-card.ai-card { border-color: rgba(6,182,212,0.1); }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .emoji-box {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .tool-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  .rating { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #eab308; }
+  .rating-val { color: var(--muted); }
+
+  .tool-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-footer { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
+  .tags-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+  }
+
+  .tag.price-bepul { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); color: #34d399; }
+  .tag.price-pullik { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); color: #f87171; }
+  .tag.price-freemium { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); color: #fbbf24; }
+
+  .visit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 12px;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.2);
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .25s;
+  }
+
+  .visit-btn:hover {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 20px rgba(6,182,212,0.4);
+    transform: translateY(-1px);
+  }
+
+  .load-more-wrap {
+    display: none;
+    justify-content: center;
+    margin: 20px 0 60px;
+  }
+
+  .load-more-wrap.visible { display: flex; }
+
+  .load-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 36px;
+    border-radius: 16px;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.25);
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .3s;
+  }
+
+  .load-more-btn:hover:not(:disabled) {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 25px rgba(6,182,212,0.4);
+    transform: translateY(-2px);
+  }
+
+  .load-more-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    display: none;
+  }
+
+  .empty-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 24px;
+  }
+
+  .empty h3 { font-size: 22px; margin-bottom: 10px; }
+  .empty p { color: var(--muted); margin-bottom: 24px; }
+
+  .empty-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .reset-btn {
+    padding: 12px 28px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+
+  .reset-btn:hover { background: rgba(255,255,255,0.15); }
+
+  .ai-search-btn {
+    padding: 12px 28px;
+    border-radius: 12px;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.2);
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-search-btn:hover {
+    background: var(--primary);
+    color: #000;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid var(--card-border);
+    position: relative;
+    z-index: 1;
+    margin-top: 40px;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge" id="headerBadge">✦ Yig'ilmoqda...</div>
+  <h1>AI Ilovalar <span class="neon">Katalogi</span></h1>
+  <p class="subtitle">
+    Dunyodagi eng yaxshi va eng so'nggi sun'iy intellekt vositalarini qidiring, kashf eting va o'z ishingizni tezlashtiring.
+  </p>
+  <div class="search-wrap">
+    <div class="search-glow"></div>
+    <div class="search-box">
+      <span class="search-icon" id="searchIcon">🔍</span>
+      <input id="searchInput" type="text" placeholder="Ilova nomi yoki mavzuni kiriting..." autocomplete="off">
+      <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+    </div>
+  </div>
+  <div class="ai-toggle-wrap">
+    <button class="ai-toggle-btn" id="aiToggleBtn" onclick="toggleAIMode()">
+      <span class="ai-dot"></span>
+      <span id="aiToggleLabel">🌐 Internetdan Real Vaqtda Qidirish</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">⊞</div>
+      <div class="stat-number" id="statTotal">0</div>
+      <div class="stat-label">Jami Ilovalar</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="color:#34d399">⚡</div>
+      <div class="stat-number" style="color:#34d399" id="statFree">0</div>
+      <div class="stat-label">Bepul Vositalar</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="color:#fbbf24">★</div>
+      <div class="stat-number" style="color:#fbbf24" id="statPaid">0</div>
+      <div class="stat-label">Pullik / Freemium</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="color:#a78bfa">⬡</div>
+      <div class="stat-number" style="color:#a78bfa" id="statCat">0</div>
+      <div class="stat-label">Kategoriyalar</div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="cat-scroll">
+      <div class="cat-pills" id="catPills"></div>
+    </div>
+    <div class="price-toggle" id="priceToggle"></div>
+  </div>
+
+  <div class="ai-banner" id="aiBanner">
+    <span class="ai-banner-icon">🌐</span>
+    <span class="ai-banner-text" id="aiBannerText">Internet qidiruv faollashtirildi — ochiq manbalardan ma'lumot yuklanmoqda...</span>
+  </div>
+
+  <div class="error-banner" id="errorBanner">
+    <span>⚠️</span>
+    <span id="errorMsg">Qidiruv amalga oshmadi. Internet ulanishingizni tekshiring.</span>
+    <button class="retry-btn" onclick="retrySearch()">↻ Qayta urinish</button>
+  </div>
+
+  <div class="results-info" id="resultsInfo"></div>
+  <div class="tools-grid" id="toolsGrid"></div>
+
+  <div class="load-more-wrap" id="loadMoreWrap">
+    <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()">
+      <span>✦</span>
+      <span id="loadMoreLabel">Ko'proq natijalarni yuklash</span>
+    </button>
+  </div>
+
+  <div class="empty" id="emptyState">
+    <div class="empty-icon">🔍</div>
+    <h3>Hech narsa topilmadi</h3>
+    <p id="emptyMsg">Ushbu filtrlar bilan mos keladigan ilova yo'q.</p>
+    <div class="empty-actions">
+      <button class="reset-btn" onclick="resetFilters()">Filtrlarni tozalash</button>
+      <button class="ai-search-btn" onclick="enableAIMode()">🌐 Internetdan izlash</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>🤖 <strong id="footerCount">AI Ilovalar Katalogi</strong> &nbsp;|&nbsp; Barcha huquqlar himoyalangan</p>
+</footer>
+
+<script>
+const TOOLS = [
+  { id:"chatgpt", name:"ChatGPT", category:"Chatbot", pricing:"Freemium", emoji:"💬", description:"OpenAI tomonidan yaratilgan dunyodagi eng mashhur sun'iy intellekt chatboti.", url:"https://chatgpt.com", rating:5.0, tags:["AI","Matn","OpenAI"] },
+  { id:"claude", name:"Claude", category:"Chatbot", pricing:"Freemium", emoji:"🧠", description:"Anthropic tomonidan yaratilgan xavfsiz va aqlli AI yordamchisi. Katta matnlarni tahlil qilishda zo'r.", url:"https://claude.ai", rating:4.9, tags:["Anthropic","Tahlil","Xavfsiz"] },
+  { id:"gemini", name:"Gemini", category:"Chatbot", pricing:"Freemium", emoji:"✨", description:"Google'ning eng ilg'or multimodal sun'iy intellekt modeli.", url:"https://gemini.google.com", rating:4.7, tags:["Google","Multimodal","Qidiruv"] },
+  { id:"perplexity", name:"Perplexity AI", category:"Chatbot", pricing:"Freemium", emoji:"🔍", description:"Savollaringizga internetdan real vaqtda javob topib beradigan tadqiqot yordamchisi.", url:"https://www.perplexity.ai", rating:4.8, tags:["Qidiruv","Tadqiqot","Faktlar"] },
+  { id:"mistral", name:"Le Chat (Mistral)", category:"Chatbot", pricing:"Bepul", emoji:"🌪️", description:"Mistral AI tomonidan ishlab chiqilgan kuchli va ochiq manbali chatbot.", url:"https://chat.mistral.ai", rating:4.6, tags:["Open Source","Yevropa","Tezkor"] },
+  { id:"copilot", name:"Microsoft Copilot", category:"Chatbot", pricing:"Freemium", emoji:"💻", description:"Web qidiruv, tasvir yaratish va ofis ishlari uchun Microsoft'ning AI yordamchisi.", url:"https://copilot.microsoft.com", rating:4.5, tags:["Microsoft","GPT-4","DALL-E"] },
+  { id:"midjourney", name:"Midjourney", category:"Tasvirlar", pricing:"Pullik", emoji:"🎨", description:"Dunyodagi eng sifatli va realistik rasmlar yaratuvchi AI generator (Discord orqali).", url:"https://www.midjourney.com", rating:4.9, tags:["San'at","Dizayn","Realistik"] },
+  { id:"dalle", name:"DALL-E 3", category:"Tasvirlar", pricing:"Freemium", emoji:"🖼️", description:"ChatGPT ichiga o'rnatilgan matndan rasm yaratuvchi qulay va aniq vosita.", url:"https://openai.com/dall-e-3", rating:4.7, tags:["OpenAI","Rasm","Oson"] },
+  { id:"runway", name:"Runway", category:"Video", pricing:"Freemium", emoji:"🎬", description:"Video yaratish va tahrirlash uchun eng yetakchi AI vositasi (Gen-2, Gen-3).", url:"https://runwayml.com", rating:4.8, tags:["Gen-3","VFX","Animatsiya"] },
+  { id:"sora", name:"Sora", category:"Video", pricing:"Pullik", emoji:"🎥", description:"OpenAI tomonidan yaratilgan, matndan o'ta realistik 1 daqiqalik video yaratuvchi AI.", url:"https://openai.com/sora", rating:4.9, tags:["OpenAI","Realistik","Kelajak"] },
+  { id:"elevenlabs", name:"ElevenLabs", category:"Audio", pricing:"Freemium", emoji:"🎙️", description:"Eng realistik ovoz generatori (Text-to-Speech) va ovoz klonlash platformasi.", url:"https://elevenlabs.io", rating:4.9, tags:["Ovoz","Klonlash","Realistik"] },
+  { id:"suno", name:"Suno", category:"Audio", pricing:"Freemium", emoji:"🎵", description:"Matn ta'riflariga asosan to'liq huquqli va sifatli musiqa yaratuvchi AI.", url:"https://suno.com", rating:4.8, tags:["Musiqa","Qo'shiq","Vokal"] },
+  { id:"githubcopilot", name:"GitHub Copilot", category:"Kod", pricing:"Pullik", emoji:"💻", description:"Dasturchilar uchun kod yozishni tezlashtiruvchi dunyodagi birinchi AI yordamchi.", url:"https://github.com/features/copilot", rating:4.8, tags:["IDE","Dasturlash","Microsoft"] },
+  { id:"cursor", name:"Cursor", category:"AI Agent IDE", pricing:"Freemium", emoji:"⌨️", description:"Kodni tushunadigan va butun loyihani o'qiy oladigan AI integratsiyalangan maxsus IDE.", url:"https://cursor.sh", rating:4.9, tags:["IDE","VS Code","Tezkor"] },
+  { id:"antigravity", name:"Antigravity", category:"AI Agent IDE", pricing:"Bepul", emoji:"🌌", description:"Google tomonidan yaratilgan, kod yozuvchi va terminalni avtonom boshqaruvchi IDE agent.", url:"https://antigravity.google", rating:5.0, tags:["IDE","Avtonom","Google"] },
+  { id:"windsurf", name:"Windsurf", category:"AI Agent IDE", pricing:"Freemium", emoji:"🏄‍♂️", description:"Codeium tomonidan yaratilgan, dasturchining harakatlarini real vaqtda kuzatuvchi kaskadli AI IDE.", url:"https://codeium.com/windsurf", rating:4.9, tags:["Kaskad","IDE","Codeium"] },
+  { id:"aider", name:"Aider", category:"AI Agent IDE", pricing:"Bepul", emoji:"📟", description:"Terminal orqali butun loyihani o'zgartiruvchi va Git bilan ishlovchi avtonom AI agent.", url:"https://aider.chat", rating:4.8, tags:["Terminal","Git","Avtonom"] },
+  { id:"jasper", name:"Jasper", category:"Yozish", pricing:"Pullik", emoji:"✍️", description:"Marketologlar, blogerlar va korxonalar uchun matn yaratishda yetakchi platforma.", url:"https://www.jasper.ai", rating:4.6, tags:["Marketing","Blog","Copywriting"] },
+  { id:"notionai", name:"Notion AI", category:"Biznes", pricing:"Pullik", emoji:"📓", description:"Notion ichidagi eslatmalarni tartibga soluvchi, yozuvchi va xulosa qiluvchi sun'iy intellekt.", url:"https://www.notion.so/product/ai", rating:4.8, tags:["Hujjatlar","Hosildorlik","Jamoa"] },
+  { id:"zapierai", name:"Zapier Central", category:"Biznes", pricing:"Freemium", emoji:"⚙️", description:"Botlar yarating va ularni 6000+ ilovalar bilan avtomatik integratsiya qiling.", url:"https://zapier.com/central", rating:4.7, tags:["Avtomatizatsiya","Integratsiya","Bot"] },
+  { id:"duolingo", name:"Duolingo Max", category:"Ta'lim", pricing:"Pullik", emoji:"🦉", description:"Rolli o'yinlar va xatolarni tushuntirish orqali til o'rgatuvchi AI funksiyalari.", url:"https://www.duolingo.com", rating:4.7, tags:["Tillar","Mashqlar","O'yin"] },
+  { id:"chatpdf", name:"ChatPDF", category:"Ta'lim", pricing:"Freemium", emoji:"📄", description:"Har qanday PDF hujjatni yuklab, uni o'qitib u haqida savollar berish.", url:"https://www.chatpdf.com", rating:4.7, tags:["PDF","Talabalar","Tadqiqot"] },
+  { id:"deepl", name:"DeepL", category:"Tarjima", pricing:"Freemium", emoji:"🌍", description:"Dunyodagi eng aniq va tabiiy matn tarjimoni (Google Translatedan sifatliroq).", url:"https://www.deepl.com", rating:4.9, tags:["Aniqlik","Hujjatlar","Professional"] },
+  { id:"figmaai", name:"Figma AI", category:"Dizayn", pricing:"Freemium", emoji:"🎨", description:"Dizaynerlar uchun interfeyslarni, maketlarni va matnlarni generatsiya qiluvchi UI vosita.", url:"https://www.figma.com/ai", rating:4.8, tags:["UI/UX","Prototip","Avtomat"] },
+  { id:"surfer", name:"Surfer SEO", category:"SEO", pricing:"Pullik", emoji:"📈", description:"Qidiruv tizimlarida birinchi o'ringa chiqish uchun maqolalarni AI yordamida optimallashtirish.", url:"https://surferseo.com", rating:4.7, tags:["Google","Optimallashtirish","Tahlil"] },
+  { id:"v0", name:"v0 by Vercel", category:"Boshqa", pricing:"Freemium", emoji:"🔺", description:"Matn orqali React (Tailwind) komponentlari va butun boshli interfeyslarni generatsiya qilish.", url:"https://v0.dev", rating:4.9, tags:["UI","React","Frontend"] }
+];
+
+const CATEGORIES = ["Hammasi","Chatbot","Yozish","Tasvirlar","Video","Audio","Kod","AI Agent IDE","Biznes","Ta'lim","Tarjima","Dizayn","SEO","Boshqa"];
+const PRICINGS   = ["Hammasi","Bepul","Pullik","Freemium"];
+
+let activeCategory = "Hammasi";
+let activePricing  = "Hammasi";
+let searchQuery    = "";
+let isAIMode       = false;
+let isLoading      = false;
+let aiTools        = [];
+let aiPage         = 1;
+let aiHasMore      = false;
+let aiTotal        = 0;
+let debounceTimer  = null;
+
+const $searchInput  = document.getElementById("searchInput");
+const $clearBtn     = document.getElementById("clearBtn");
+const $searchIcon   = document.getElementById("searchIcon");
+const $catPills     = document.getElementById("catPills");
+const $priceToggle  = document.getElementById("priceToggle");
+const $toolsGrid    = document.getElementById("toolsGrid");
+const $emptyState   = document.getElementById("emptyState");
+const $emptyMsg     = document.getElementById("emptyMsg");
+const $resultsInfo  = document.getElementById("resultsInfo");
+const $aiBanner     = document.getElementById("aiBanner");
+const $aiBannerText = document.getElementById("aiBannerText");
+const $errorBanner  = document.getElementById("errorBanner");
+const $errorMsg     = document.getElementById("errorMsg");
+const $loadMoreWrap = document.getElementById("loadMoreWrap");
+const $loadMoreBtn  = document.getElementById("loadMoreBtn");
+const $loadMoreLabel= document.getElementById("loadMoreLabel");
+const $aiToggleBtn  = document.getElementById("aiToggleBtn");
+const $aiToggleLabel= document.getElementById("aiToggleLabel");
+const $headerBadge  = document.getElementById("headerBadge");
+const $statTotal    = document.getElementById("statTotal");
+const $statFree     = document.getElementById("statFree");
+const $statPaid     = document.getElementById("statPaid");
+const $statCat      = document.getElementById("statCat");
+const $footerCount  = document.getElementById("footerCount");
+
+function updateDynamicStats() {
+  const total = TOOLS.length;
+  const free = TOOLS.filter(t => t.pricing.toLowerCase() === "bepul").length;
+  const paidOrFree = total - free;
+  const cats = CATEGORIES.length - 1;
+
+  $statTotal.textContent = total;
+  $statFree.textContent = free + "+";
+  $statPaid.textContent = paidOrFree + "+";
+  $statCat.textContent = cats;
+  $headerBadge.textContent = `✦ ${total}+ AI vosita katalogi`;
+  $footerCount.textContent = `AI Ilovalar Katalogi — ${total}+ vosita`;
+}
+
+CATEGORIES.forEach(cat => {
+  const btn = document.createElement("button");
+  btn.className = "pill" + (cat === "Hammasi" ? " active" : "");
+  btn.textContent = cat;
+  btn.onclick = () => {
+    activeCategory = cat;
+    $catPills.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    onFilterChange();
+  };
+  $catPills.appendChild(btn);
+});
+
+PRICINGS.forEach(price => {
+  const btn = document.createElement("button");
+  btn.className = "price-btn" + (price === "Hammasi" ? " active" : "");
+  btn.textContent = price;
+  btn.onclick = () => {
+    activePricing = price;
+    $priceToggle.querySelectorAll(".price-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    onFilterChange();
+  };
+  $priceToggle.appendChild(btn);
+});
+
+$searchInput.addEventListener("input", () => {
+  searchQuery = $searchInput.value;
+  $clearBtn.classList.toggle("visible", !!searchQuery);
+  onFilterChange();
+});
+
+function clearSearch() {
+  $searchInput.value = "";
+  searchQuery = "";
+  $clearBtn.classList.remove("visible");
+  onFilterChange();
+}
+
+function onFilterChange() {
+  if (isAIMode) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      aiTools = [];
+      aiPage = 1;
+      doAISearch(false);
+    }, 550);
+  } else {
+    renderStatic();
+  }
+}
+
+function toggleAIMode() {
+  if (isAIMode) {
+    disableAIMode();
+  } else {
+    enableAIMode();
+  }
+}
+
+function enableAIMode() {
+  isAIMode = true;
+  aiTools = [];
+  aiPage = 1;
+  $aiToggleBtn.classList.add("active");
+  $aiToggleLabel.textContent = "🌐 Internet Qidiruv Yoqilgan ✓";
+  $headerBadge.textContent   = "✦ Haqiqiy internetdan qidiruv";
+  $searchInput.placeholder   = "Internetdan AI haqida ma'lumot izlash...";
+  $aiBanner.classList.add("visible");
+  $errorBanner.classList.remove("visible");
+  $statTotal.textContent = "∞";
+  doAISearch(false);
+}
+
+function disableAIMode() {
+  isAIMode = false;
+  aiTools = [];
+  $aiToggleBtn.classList.remove("active");
+  $aiToggleLabel.textContent = "🌐 Internetdan Real Vaqtda Qidirish";
+  updateDynamicStats();
+  $searchInput.placeholder   = "Ilova nomi yoki mavzuni kiriting...";
+  $aiBanner.classList.remove("visible");
+  $errorBanner.classList.remove("visible");
+  $loadMoreWrap.classList.remove("visible");
+  setSearchIcon(false);
+  renderStatic();
+}
+
+function resetFilters() {
+  clearSearch();
+  activeCategory = "Hammasi";
+  activePricing  = "Hammasi";
+  $catPills.querySelectorAll(".pill").forEach((p, i) => p.classList.toggle("active", i === 0));
+  $priceToggle.querySelectorAll(".price-btn").forEach((b, i) => b.classList.toggle("active", i === 0));
+  onFilterChange();
+}
+
+/* MATNNI O'ZBEKCHAGA TARJIMA QILUVCHI YORDAMCHI FUNKSIYA */
+async function translateToUzbek(text) {
+  if (!text) return "";
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=uz&dt=t&q=${encodeURIComponent(text)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data[0].map(item => item[0]).join('');
+  } catch (err) {
+    return text;
+  }
+}
+
+/* SERVER 404 XATOSINI OLISH UCHUN WIKIPEDIA OPEN API ISHLATILDI VA TARJIMA/KATEGORIYA QO'SHILDI */
+async function doAISearch(append) {
+  if (isLoading) return;
+  isLoading = true;
+  setSearchIcon(true);
+  $errorBanner.classList.remove("visible");
+
+  const queryTxt = searchQuery || "Sun'iy intellekt";
+  const displayCategory = activeCategory === "Hammasi" ? "" : ` (${activeCategory})`;
+  $aiBannerText.innerHTML = `🌐 <strong>"${queryTxt}"${displayCategory}</strong> haqida internetdan ma'lumotlar qidirilmoqda... (sahifa ${aiPage})`;
+
+  if (!append) {
+    showSkeletons(8);
+    $loadMoreWrap.classList.remove("visible");
+    $resultsInfo.innerHTML = "";
+  } else {
+    $loadMoreBtn.disabled = true;
+    $loadMoreLabel.textContent = "Yuklanmoqda...";
+  }
+
+  try {
+    let queryTerm = searchQuery ? searchQuery : "Artificial Intelligence Software";
+    if (activeCategory !== "Hammasi") {
+       queryTerm += " " + activeCategory;
+    }
+
+    const offset = (aiPage - 1) * 10;
+    const apiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(queryTerm)}&sroffset=${offset}&utf8=&format=json&origin=*`;
+
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error("Internet API xatosi: " + res.status);
+
+    const data = await res.json();
+
+    const searchResults = await Promise.all(data.query.search.map(async item => {
+      const cleanDesc = item.snippet.replace(/<\/?[^>]+(>|$)/g, "") + "...";
+      const translatedDesc = await translateToUzbek(cleanDesc);
+      const translatedTitle = await translateToUzbek(item.title);
+
+      return {
+        id: item.pageid,
+        name: translatedTitle,
+        category: activeCategory !== "Hammasi" ? activeCategory : "Internet Qidiruv",
+        pricing: "Qidiruv Natijasi",
+        emoji: "🌐",
+        description: translatedDesc,
+        url: `https://www.google.com/search?q=${encodeURIComponent(item.title + " official website AI")}`,
+        rating: 4.8,
+        tags: ["Web", "AI"]
+      };
+    }));
+
+    if (append) {
+      aiTools = [...aiTools, ...searchResults];
+    } else {
+      aiTools = searchResults;
+    }
+
+    aiHasMore = data.continue !== undefined;
+    aiTotal   = data.query.searchinfo.totalhits || aiTools.length;
+
+    $aiBannerText.innerHTML = `🌐 Internetdan <strong>${aiTools.length} ta natija topildi va o'zbek tiliga o'girildi</strong> (jami ~${aiTotal}+ topildi) — ko'rsatilmoqda`;
+
+    renderAI();
+
+  } catch (err) {
+    $errorBanner.classList.add("visible");
+    $errorMsg.textContent = "Internet qidiruvi yoki tarjima amalga oshmadi: " + err.message;
+    if (!append) {
+      $toolsGrid.innerHTML = "";
+      $emptyState.style.display = "none";
+    }
+  } finally {
+    isLoading = false;
+    setSearchIcon(false);
+    $loadMoreBtn.disabled = false;
+    $loadMoreLabel.textContent = "Ko'proq internet natijalarini yuklash";
+  }
+}
+
+function retrySearch() {
+  if (isAIMode) {
+    aiTools = [];
+    aiPage = 1;
+    doAISearch(false);
+  }
+}
+
+function loadMore() {
+  if (!isLoading && aiHasMore) {
+    aiPage++;
+    doAISearch(true);
+  }
+}
+
+function setSearchIcon(spinning) {
+  $searchIcon.textContent = spinning ? "⟳" : "🔍";
+  $searchIcon.classList.toggle("spinning", spinning);
+}
+
+function showSkeletons(count) {
+  $emptyState.style.display = "none";
+  $toolsGrid.innerHTML = Array.from({length: count}).map(() => `
+    <div class="skeleton-card">
+      <div class="skel-row">
+        <div class="skel-box"></div>
+        <div class="skel-lines">
+          <div class="skel-line med"></div>
+          <div class="skel-line short"></div>
+        </div>
+      </div>
+      <div class="skel-line full"></div>
+      <div class="skel-line full"></div>
+      <div class="skel-line med"></div>
+      <div class="skel-btn"></div>
+    </div>
+  `).join("");
+}
+
+function cardHTML(tool, idx, isAI) {
+  const delay = Math.min(idx % 20, 19) * 0.03;
+  const priceCls = (tool.pricing || "").toLowerCase() === "bepul" ? "price-bepul"
+                 : (tool.pricing || "").toLowerCase() === "pullik" ? "price-pullik" : "price-freemium";
+  return `
+    <div class="tool-card${isAI ? " ai-card" : ""}" style="animation-delay:${delay}s">
+      <div class="card-header">
+        <div class="emoji-box">${tool.emoji || "🤖"}</div>
+        <div style="min-width:0;flex:1">
+          <div class="tool-name" title="${tool.name}">${tool.name}</div>
+          <div class="rating">★ <span class="rating-val">${(+(tool.rating||4.5)).toFixed(1)}</span></div>
+        </div>
+      </div>
+      <p class="tool-desc">${tool.description}</p>
+      <div class="card-footer">
+        <div class="tags-row">
+          <span class="tag">${tool.category || ""}</span>
+          <span class="tag ${priceCls}">${tool.pricing || ""}</span>
+          ${isAI && tool.company ? `<span class="tag">${tool.company}</span>` : ""}
+        </div>
+        <a class="visit-btn" href="${tool.url}" target="_blank" rel="noopener noreferrer">
+          ${isAI ? "Google'dan topish ↗" : "Saytga o'tish ↗"}
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function renderAI() {
+  $emptyState.style.display = "none";
+  if (aiTools.length === 0) {
+    $toolsGrid.innerHTML = "";
+    $emptyState.style.display = "block";
+    $emptyMsg.textContent = "Internetdan ma'lumot topilmadi. Boshqa so'z kiriting.";
+    $loadMoreWrap.classList.remove("visible");
+    $resultsInfo.innerHTML = "";
+    return;
+  }
+  $resultsInfo.innerHTML = `Internetdan <span>${aiTools.length}</span> ta natija topildi${aiTotal > aiTools.length ? ` (jami ~${aiTotal}+)` : ""}`;
+  $toolsGrid.innerHTML = aiTools.map((t, i) => cardHTML(t, i, true)).join("");
+  $loadMoreWrap.classList.toggle("visible", aiHasMore);
+}
+
+function renderStatic() {
+  const q = searchQuery.toLowerCase();
+  const filtered = TOOLS.filter(t => {
+    const mQ = !q || t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.tags.some(tag => tag.toLowerCase().includes(q));
+    const mC = activeCategory === "Hammasi" || t.category === activeCategory;
+    const mP = activePricing  === "Hammasi" || t.pricing  === activePricing;
+    return mQ && mC && mP;
+  });
+
+  $loadMoreWrap.classList.remove("visible");
+
+  if (filtered.length === 0) {
+    $toolsGrid.innerHTML = "";
+    $emptyState.style.display = "block";
+    $emptyMsg.textContent = q ? `"${searchQuery}" bo'yicha mos keladigan ilova topilmadi.` : "Ushbu filtrlar bilan mos keladigan ilova yo'q.";
+    $resultsInfo.innerHTML = "";
+  } else {
+    $emptyState.style.display = "none";
+    $resultsInfo.innerHTML = `<span>${filtered.length}</span> ta vosita topildi`;
+    $toolsGrid.innerHTML = filtered.map((t, i) => cardHTML(t, i, false)).join("");
+  }
+}
+
+updateDynamicStats();
+renderStatic();
+</script>
+</body>
+</html>
