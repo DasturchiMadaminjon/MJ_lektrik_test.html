@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="MJ Dasturchi - Elektriklar uchun professional test platformasi">
+    <meta name="theme-color" content="#00d4ff">
+    <title>MJ Platform | Elektriklar Uchun Professional Test Tizimi</title>
+    <style>
+        :root {
+            --primary-bg: #0a0e27;
+            --secondary-bg: #151b3d;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #7b2cbf;
+            --accent-green: #00f5a0;
+            --accent-orange: #ff6b35;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c2ff;
+            --text-muted: #6c7a9d;
+            --glass-bg: rgba(21, 27, 61, 0.7);
+            --glass-border: rgba(0, 212, 255, 0.2);
+            --shadow-cyan: 0 0 40px rgba(0, 212, 255, 0.3);
+            --shadow-purple: 0 0 40px rgba(123, 44, 191, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 20px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2.5rem;
+            --spacing-xl: 4rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, #1a1f4d 50%, var(--secondary-bg) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(123, 44, 191, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 245, 160, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-cyan);
+            padding: var(--spacing-lg);
+            transition: var(--transition);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.4);
+            border-color: var(--accent-cyan);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #00c853 100%);
+            color: #000;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff1744 0%, #ff6b35 100%);
+            color: var(--text-primary);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffd700 0%, var(--accent-orange) 100%);
+            color: #000;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-cyan);
+            color: var(--primary-bg);
+            box-shadow: var(--shadow-cyan);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .header {
+            text-align: center;
+            padding: var(--spacing-xl) 0 var(--spacing-lg);
+            position: relative;
+        }
+
+        .header::before {
+            content: '⚡';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-xs);
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-green) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .header .tagline {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            color: var(--accent-cyan);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: var(--spacing-sm);
+            background: rgba(10, 14, 39, 0.6);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-select option {
+            background: var(--secondary-bg);
+            color: var(--text-primary);
+        }
+
+        .progress-container {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-green) 100%);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--spacing-xs);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .question-card {
+            margin-bottom: var(--spacing-lg);
+            page-break-inside: avoid;
+        }
+
+        .question-header {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-cyan);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-tashkiliy { background: rgba(0, 212, 255, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        .category-texnik { background: rgba(0, 245, 160, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .category-asoslar { background: rgba(123, 44, 191, 0.2); color: #c77dff; border: 1px solid #c77dff; }
+        .category-uskunalar { background: rgba(255, 107, 53, 0.2); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
+        .category-xavfsizlik { background: rgba(255, 23, 68, 0.2); color: #ff1744; border: 1px solid #ff1744; }
+        .category-kabel { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid #ffd700; }
+
+        .question-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: var(--spacing-sm);
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            page-break-inside: avoid;
+        }
+
+        .option-card:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--accent-cyan);
+            transform: translateX(10px);
+        }
+
+        .option-card.selected {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--shadow-cyan);
+        }
+
+        .option-card.correct {
+            background: rgba(0, 245, 160, 0.2);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 30px rgba(0, 245, 160, 0.4);
+        }
+
+        .option-card.incorrect {
+            background: rgba(255, 23, 68, 0.2);
+            border-color: #ff1744;
+            box-shadow: 0 0 30px rgba(255, 23, 68, 0.4);
+        }
+
+        .option-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            border-radius: 8px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .explanation {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid var(--accent-cyan);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            border-radius: 0 16px 16px 0;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-cyan);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            margin-top: var(--spacing-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .export-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            justify-content: center;
+            margin-top: var(--spacing-lg);
+        }
+
+        .timer {
+            position: fixed;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 12px;
+            border: 2px solid var(--accent-cyan);
+            font-weight: 900;
+            font-size: 1.2rem;
+            z-index: 100;
+            box-shadow: var(--shadow-cyan);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer.warning {
+            animation: pulse 1s infinite;
+            border-color: #ff1744;
+            background: rgba(255, 23, 68, 0.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--spacing-lg);
+            gap: var(--spacing-sm);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--accent-cyan);
+        }
+
+        .checkbox-item input {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: var(--accent-cyan);
+        }
+
+        .footer {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: var(--spacing-xl);
+        }
+
+        .footer .developer {
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        .footer .current-date {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .header .subtitle { font-size: 1.1rem; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .nav-buttons { flex-direction: column; }
+            .timer { top: auto; bottom: var(--spacing-md); right: var(--spacing-md); }
+            .export-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+            .question-text { font-size: 1.1rem; }
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+            body::before { display: none !important; }
+            .glass-card {
+                background: white !important;
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                color: black !important;
+                page-break-inside: avoid;
+            }
+            .btn, .timer, .nav-buttons, .export-buttons, .header::before { display: none !important; }
+            .explanation { display: block !important; color: black !important; }
+            .screen { display: block !important; }
+            .screen:not(.active) { display: none !important; }
+            .header h1 {
+                color: #00d4ff !important;
+                -webkit-text-fill-color: #00d4ff !important;
+                font-size: 24pt;
+            }
+            .stat-value {
+                color: #00d4ff !important;
+                -webkit-text-fill-color: #00d4ff !important;
+            }
+            .stat-label {
+                color: #666 !important;
+            }
+            .category-badge {
+                border: 1px solid #333 !important;
+                color: black !important;
+            }
+            .question-text {
+                color: black !important;
+                font-weight: bold;
+            }
+            .option-card {
+                border: 1px solid #ddd !important;
+                background: white !important;
+                color: black !important;
+                page-break-inside: avoid;
+            }
+            .option-card.correct {
+                background: #d4edda !important;
+                border-color: #28a745 !important;
+            }
+            .option-card.incorrect {
+                background: #f8d7da !important;
+                border-color: #dc3545 !important;
+            }
+            .explanation {
+                background: #e7f3ff !important;
+                border-left-color: #00d4ff !important;
+                color: black !important;
+            }
+            .progress-bar {
+                background: #ddd !important;
+            }
+            .progress-fill {
+                background: #28a745 !important;
+            }
+            h2, h3 {
+                color: #00d4ff !important;
+                page-break-after: avoid;
+            }
+            p, div {
+                color: black !important;
+            }
+            .footer {
+                display: block !important;
+                color: #666 !important;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: 12px;
+            border: 2px solid var(--accent-cyan);
+            z-index: 1000;
+            transition: var(--transition);
+            opacity: 0;
+            box-shadow: var(--shadow-cyan);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { border-color: var(--accent-green); }
+        .toast.error { border-color: #ff1744; }
+        .toast.warning { border-color: var(--accent-orange); }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: var(--spacing-md);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .feature-title {
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .question-count-info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: var(--spacing-sm);
+            margin-top: var(--spacing-xs);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .download-hint {
+            text-align: center;
+            padding: var(--spacing-sm);
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            margin-top: var(--spacing-sm);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .print-container {
+            display: none;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+
+        @media print {
+            .print-container {
+                display: block !important;
+            }
+            .container {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer" style="display: none;">00:00</div>
+    <div class="toast" id="toast"></div>
+    <div class="print-container" id="print-container"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1>MJ PLATFORM</h1>
+            <p class="subtitle">Elektriklar Uchun Professional Test Tizimi</p>
+            <p class="tagline">Zamonaviy texnologiyalar asosida yaratilgan offline test platformasi</p>
+        </header>
+
+        <!-- LANDING SCREEN -->
+        <div class="screen active" id="landing-screen">
+            <div class="glass-card">
+                <div style="text-align: center; padding: var(--spacing-xl);">
+                    <div style="font-size: 5rem; margin-bottom: var(--spacing-md);">🎯</div>
+                    <h2 style="margin-bottom: var(--spacing-md); font-size: 2rem; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Professional Bilimlarni Sinash Platformasi</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                        <span id="total-questions-display">100+</span> professional savol-javoblar bazasi. To'liq offline ishlaydi. PDF/Word/JSON eksport imkoniyatlari. Zamonaviy interfeys va qulay foydalanish tajribasi.
+                    </p>
+
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">📚</div>
+                            <div class="feature-title">100+ Savollar</div>
+                            <div class="feature-desc">Professional elektr tizimlari bo'yicha</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔌</div>
+                            <div class="feature-title">100% Offline</div>
+                            <div class="feature-desc">Internetsiz ishlaydi</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-title">Batafsil Tahlil</div>
+                            <div class="feature-desc">Natijalarni chuqur tahlil qilish</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">💾</div>
+                            <div class="feature-title">Eksport</div>
+                            <div class="feature-desc">PDF/Word/JSON formatlar</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid" style="margin-bottom: var(--spacing-lg);">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-questions-count">100+</div>
+                            <div class="stat-label">Savollar</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">6</div>
+                            <div class="stat-label">Kategoriyalar</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">∞</div>
+                            <div class="stat-label">Cheksiz Urinishlar</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="app.navigate('settings-screen')" style="font-size: 1.3rem; padding: var(--spacing-md) var(--spacing-xl);">
+                        🚀 Testni Boshlash
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS SCREEN -->
+        <div class="screen" id="settings-screen">
+            <div class="glass-card">
+                <h2 style="margin-bottom: var(--spacing-lg); color: var(--accent-cyan);">⚙️ Test Sozlamalari</h2>
+
+                <div class="form-group">
+                    <label class="form-label">📂 Kategoriyalarni Tanlang:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="tashkiliy" checked onchange="app.updateQuestionCount()">
+                            <span>📋 Tashkiliy Tadbirlar</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="texnik" checked onchange="app.updateQuestionCount()">
+                            <span>🔧 Texnik Tadbirlar</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="asoslar" checked onchange="app.updateQuestionCount()">
+                            <span>⚡ Elektr Asoslari</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="uskunalar" checked onchange="app.updateQuestionCount()">
+                            <span>🏭 Uskunalar</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="xavfsizlik" checked onchange="app.updateQuestionCount()">
+                            <span>🛡️ Xavfsizlik</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="kabel" checked onchange="app.updateQuestionCount()">
+                            <span>🔌 Kabellar</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📊 Savollar Soni:</label>
+                    <select class="form-select" id="question-count">
+                        <option value="10">10 ta savol</option>
+                        <option value="20">20 ta savol</option>
+                        <option value="30">30 ta savol</option>
+                        <option value="50">50 ta savol</option>
+                        <option value="100">Barcha savollar</option>
+                    </select>
+                    <div class="question-count-info" id="question-count-info">
+                        📊 Tanlangan kategoriyalarda: <strong id="available-questions">0</strong> ta savol mavjud
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">⏱️ Vaqt Cheklovi:</label>
+                    <select class="form-select" id="time-limit">
+                        <option value="0">Vaqt cheklovisiz</option>
+                        <option value="600">10 daqiqa</option>
+                        <option value="1200">20 daqiqa</option>
+                        <option value="1800">30 daqiqa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">👤 Ism Familiya:</label>
+                    <input type="text" class="form-input" id="user-name" placeholder="Ism familiyangizni kiriting">
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-outline" onclick="app.navigate('landing-screen')">← Orqaga</button>
+                    <button class="btn btn-primary" onclick="app.startTest()">Testni Boshlash →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEST SCREEN -->
+        <div class="screen" id="test-screen">
+            <div class="glass-card">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progress-text">Savol 1 / 10</span>
+                        <span id="score-text">Ball: 0</span>
+                    </div>
+                </div>
+
+                <div id="question-container"></div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-outline" id="prev-btn" onclick="app.prevQuestion()" disabled>← Oldingi</button>
+                    <button class="btn btn-primary" id="next-btn" onclick="app.nextQuestion()">Keyingi →</button>
+                    <button class="btn btn-success" id="finish-btn" onclick="app.finishTest()" style="display: none;">Testni Tugatish ✓</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="screen" id="results-screen">
+            <div class="glass-card">
+                <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+                    <div style="font-size: 5rem; margin-bottom: var(--spacing-sm);">🏆</div>
+                    <h2 style="color: var(--accent-cyan); margin-bottom: var(--spacing-sm);">Test Natijalari</h2>
+                    <p id="result-user-name" style="color: var(--text-secondary);"></p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-questions">0</div>
+                        <div class="stat-label">Jami Savollar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="correct-answers">0</div>
+                        <div class="stat-label">To'g'ri Javoblar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="wrong-answers">0</div>
+                        <div class="stat-label">Xato Javoblar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="percentage">0%</div>
+                        <div class="stat-label">Foiz</div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom: var(--spacing-lg);">
+                    <h3 style="margin-bottom: var(--spacing-md); color: var(--accent-cyan);">📊 Batafsil Natijalar</h3>
+                    <div id="detailed-results"></div>
+                </div>
+
+                <div class="export-buttons">
+                    <button class="btn btn-primary" onclick="app.exportPDF()">📄 PDF Eksport</button>
+                    <button class="btn btn-success" onclick="app.exportWord()">📝 Word Eksport</button>
+                    <button class="btn btn-warning" onclick="app.exportJSON()">💾 JSON Zaxira</button>
+                    <button class="btn btn-outline" onclick="app.navigate('landing-screen')">🏠 Bosh Sahifa</button>
+                </div>
+                <div class="download-hint">
+                    📱 Telefonda: Fayl yuklangandan so'ng "Fayllar" ilovasidan oching
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© <span id="current-year">2024</span> <span class="developer">MJ Dasturchi</span> | Elektriklar Uchun Professional Platforma</p>
+            <p>Offline Test Tizimi v3.0 | Barcha huquqlar himoyalangan</p>
+            <span class="current-date" id="current-date"></span>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================
+        // UPDATE FOOTER DATE
+        // ============================================
+        function updateFooterDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('uz-UZ', options);
+
+            document.getElementById('current-year').textContent = year;
+            document.getElementById('current-date').textContent = `Bugungi sana: ${dateString}`;
+        }
+
+        // ============================================
+        // MOBILE DETECTION
+        // ============================================
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // ============================================
+        // OPTIMIZED DOWNLOAD FOR MOBILE
+        // ============================================
+        async function downloadFile(blob, filename) {
+            try {
+                if (isMobile()) {
+                    // Method 1: Try navigator.share API
+                    if (navigator.share && navigator.canShare?.({ files: [new File([blob], filename)] })) {
+                        await navigator.share({
+                            files: [new File([blob], filename)],
+                            title: 'MJ Platform - Test Natijalari',
+                            text: 'Elektriklar uchun professional test natijalari'
+                        });
+                        return true;
+                    }
+
+                    // Method 2: FileReader + data URL
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const link = document.createElement('a');
+                            link.href = e.target.result;
+                            link.download = filename;
+                            link.style.display = 'none';
+                            document.body.appendChild(link);
+
+                            setTimeout(() => {
+                                link.click();
+                                document.body.removeChild(link);
+                                setTimeout(resolve, 2000);
+                            }, 500);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                } else {
+                    // Desktop: Direct download
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    return true;
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // QUESTION DATABASE (100+ Questions)
+        // ============================================
+        const questionBank = [
+            // ========== ТАШКИЛИЙ ТАДБИРЛАР (1-15) ==========
+            {id: 1, category: "tashkiliy", difficulty: "o'rta", question: "Электр ускуналарда ишнинг ҳавфсиз бажариш учун қандай ташкилий тадбирлар амалга оширилиши шарт?", options: ["Ишни хавфсиз юритиш учун жавобгар шахсни тайинлаш, наряд ёки фармойиш бериш, иш жойларини тайёрлаш ва ишлашга рухсат бериш", "Фақат наряд бериш", "Фақат иш жойини тайёрлаш", "Ҳеч қандай тадбирлар шарт эмас"], correct: 0, explanation: "Ташкилий тадбирларга: жавобгар шахсни тайинлаш, наряд/фармойиш бериш, иш жойларини тайёрлаш ва рухсат бериш, назорат олиб бориш, танаффус ва иш тугашини расмийлаштириш киради."},
+            {id: 2, category: "tashkiliy", difficulty: "o'rta", question: "Иш жараёнида ишни хавфсиз олиб боришга кимлар жавобгар?", options: ["Наряд, фармойиш берувчи; иш раҳбари; иш жойини тайёрлашга рухсат берувчи; ишбоши; кузатувчи; бригада аъзоси", "Фақат иш раҳбари", "Фақат бригада аъзоси", "Ҳеч ким жавобгар эмас"], correct: 0, explanation: "Иш хавфсизлигига наряд берувчи, иш раҳбари, иш жойини тайёрловчи, ишбоши, кузатувчи ва бригада аъзолари жавобгар."},
+            {id: 3, category: "tashkiliy", difficulty: "oson", question: "Ходимнинг лавозим йўриқномаси неча бўлимдан иборат?", options: ["6 бўлим", "3 бўлим", "10 бўлим", "Лавозим йўриқномаси шарт эмас"], correct: 0, explanation: "Лавозим йўриқномаси 6 бўлимдан иборат ҳолда ишлаб чиқилади ва тасдиқланади."},
+            {id: 4, category: "tashkiliy", difficulty: "qiyin", question: "Навбатдан ташқари йўриқнома қандай ҳолларда ўтказилади?", options: ["Бошқа иш ўрнига ўтказилганда, янги дастгоҳ ўрнатилганда, бахтсиз воқея ёки ТХ қоидалари бузилганда", "Ҳар ой", "Ҳар йили", "Фақат янги ходим келганда"], correct: 0, explanation: "Навбатдан ташқари йўриқнома: иш ўрни ўзгарганда, янги ускуна ўрнатилганда, бахтсиз ҳодиса содир бўлганда ўтказилади."},
+            {id: 5, category: "tashkiliy", difficulty: "o'rta", question: "Электр ускуналарига хизмат кўрсатувчи ходимлар неча гуруҳга бўлинади?", options: ["5 гуруҳ", "3 гуруҳ", "10 гуруҳ", "2 гуруҳ"], correct: 0, explanation: "Электр хавфсизлиги бўйича 5 та гуруҳ мавжуд (I-V гуруҳлар)."},
+            {id: 6, category: "tashkiliy", difficulty: "qiyin", question: "V гуруҳ кимларга берилади?", options: ["Навбатчи ходимлар, электр диспетчерлар, усталар, катта электротехниклар, подстанция бошлиқлари (каميда 5 йил иш стажы)", "Янги ходимларга", "Фақат инженерларга", "Ҳаммага"], correct: 0, explanation: "V гуруҳ - олий малакали ходимларга, камида 5 йил иш тажрибаси борларга берилади."},
+            {id: 7, category: "tashkiliy", difficulty: "oson", question: "I гуруҳ кимларга тегишли?", options: ["Ёрдамчи ходимларга, уларга кучланиш остидаги қисмларга яқин келиш ман этилади", "Электр чилангарларга", "Инженерларга", "Ҳаммага"], correct: 0, explanation: "I гуруҳ - махсус электротехник маълумотга эга бўлмаган ёрдамчи ходимлар."},
+            {id: 8, category: "tashkiliy", difficulty: "o'rta", question: "III гуруҳ кимларга берилади?", options: ["Электр ускунада камида 6 ой ишлаган электр чилангар ва навбатчи ходимларга", "Янги ходимларга", "Фақат инженерларга", "Ҳаммага"], correct: 0, explanation: "III гуруҳ - камида 6 ой иш тажрибаси бор ходимларга берилади."},
+            {id: 9, category: "tashkiliy", difficulty: "qiyin", question: "Баландликда бажариладиган ишларда неча киши бўлиши шарт?", options: ["Камида икки киши (бири ишлайди, иккинчиси кузатади)", "Бир киши", "Уч киши", "Тўрт киши"], correct: 0, explanation: "Баландликдаги ишларда камида 2 киши бўлиши шарт - бири ишлайди, иккинчиси кузатади."},
+            {id: 10, category: "tashkiliy", difficulty: "o'rta", question: "Кузатувчида қандай гуруҳ квалификацияси бўлиши шарт?", options: ["III ёки IV гуруҳ", "I гуруҳ", "II гуруҳ", "V гуруҳ"], correct: 0, explanation: "Кузатувчида III ёки IV гуруҳ квалификацияси бўлиши шарт."},
+            {id: 11, category: "tashkiliy", difficulty: "qiyin", question: "Техник шартлар ким томонидан берилади?", options: ["10 кВтгача - тегишли электр таъминоти корхонасига, 10 кВт ва юқори - ҳудудий электр тармоқлари корхонасига", "Фақат ҳудудий корхонага", "Фақат тегишли корхонага", "Ҳеч кимга"], correct: 0, explanation: "10 кВтгача - тегишли корхонага, 10 кВт ва юқори - ҳудудий электр тармоқлари корхонасига."},
+            {id: 12, category: "tashkiliy", difficulty: "o'rta", question: "Вазирлар Маҳкамасининг 245-қарори қачон қабул қилинган?", options: ["22.08.2009 йил", "01.11.2004 йил", "15.05.2010 йил", "10.10.2008 йил"], correct: 0, explanation: "245-сон қарор 22.08.2009 йилда қабул қилинган 'Электр энергиясидан фойдаланиш қоидалари'."},
+            {id: 13, category: "tashkiliy", difficulty: "o'rta", question: "Вазирлар Маҳкамасининг 511-қарори нима ҳақида?", options: ["Электр энергияси истеъмолчилари ва ҳудудий электр тармоқлари корхоналари ўртасидаги ўзаро ҳисоб-китоблар тартиби", "Электр хавфсизлиги", "Техник шартлар", "Иш ҳақи"], correct: 0, explanation: "511-сон қарор 2004 йил 1 ноябрда қабул қилинган, ҳисоб-китоблар тартиби тўғрисида."},
+            {id: 14, category: "tashkiliy", difficulty: "qiyin", question: "Ўзбекистон энерготизимида нечта ИЭС ва ГЭС мавжуд?", options: ["10 та ИЭС ва 38 та ГЭС", "5 та ИЭС ва 20 та ГЭС", "15 та ИЭС ва 50 та ГЭС", "8 та ИЭС ва 30 та ГЭС"], correct: 0, explanation: "Ўзбекистонда 10 та ИЭС ва 38 та ГЭС мавжуд."},
+            {id: 15, category: "tashkiliy", difficulty: "qiyin", question: "Сирдарё ИЭС қуввати қанча?", options: ["3015 МВт", "1860 МВт", "484 МВт", "1618 МВт"], correct: 0, explanation: "Сирдарё ИЭС - 3015 МВт қувватга эга."},
+
+            // ========== ТЕХНИК ТАДБИРЛАР (16-25) ==========
+            {id: 16, category: "texnik", difficulty: "o'rta", question: "Техник тадбирларга қуйидагилардан қайсилари киради?", options: ["Ўчирилиши керак бўлган ускуналарни ўчириш, тақиқловчи шиорлар осиш, кучланиш йўқлигини текшириш, ерга улаш", "Фақат ускуналарни ўчириш", "Фақат ерга улаш", "Ҳеч нарса қилиш шарт эмас"], correct: 0, explanation: "Техник тадбирлар: ўчириш, тақиқловчи шиорлар, кучланиш йўқлигини текшириш, ерга улаш, тўсиқлар ўрнатиш."},
+            {id: 17, category: "texnik", difficulty: "o'rta", question: "Кучланиш йўқлигини текшириш қачон амалга оширилади?", options: ["Ерга улашдан олдин", "Ерга улагандан кейин", "Иш тугагандан кейин", "Ҳеч қачон"], correct: 0, explanation: "Кучланиш йўқлиги ерга улашдан олдин текширилади."},
+            {id: 18, category: "texnik", difficulty: "qiyin", question: "Тақиқловчи шиорлар қаерга осилади?", options: ["Узоқдан бошқариладиган коммутацион аппаратларнинг калитларига, қўл билан бошқариладиган юритмаларга", "Фақат эшикка", "Фақат ускунага", "Ҳеч қаерга"], correct: 0, explanation: "Тақиқловчи шиорлар коммутацион аппаратлар калитларига ва юритмаларга осилади."},
+            {id: 19, category: "texnik", difficulty: "o'rta", question: "Ерга улагични ўрнатиш қандай амалга оширилади?", options: ["Ерга улагич пичоқларини улаш, кўчма ерга улагични ўрнатиш", "Фақат пичоқларни улаш", "Фақат кўчма улагич", "Ерга улаш шарт эмас"], correct: 0, explanation: "Ерга улагич пичоқларини улаш ва кўчма ерга улагични ўрнатиш орқали амалга оширилади."},
+            {id: 20, category: "texnik", difficulty: "qiyin", question: "Иш жойларини тўсиш қачон талаб қилинади?", options: ["Зарур бўлган тақдирда, иш жойларини ёки кучланиш остида қолган бошқа ток ўтказувчи қисмларни тўсиш", "Ҳар доим", "Ҳеч қачон", "Фақат кечаси"], correct: 0, explanation: "Зарур бўлган тақдирда иш жойлари тўсилади."},
+            {id: 21, category: "texnik", difficulty: "o'rta", question: "Маҳаллий шароитга қараб ўчирилган ток ўтказувчи қисмлар қачон тўсиқлар билан ажратилади?", options: ["Ерга уланишдан олдин ёки кейин", "Фақат олдин", "Фақат кейин", "Ажратилмайди"], correct: 0, explanation: "Маҳаллий шароитга қараб ерга уланишдан олдин ёки кейин тўсиқлар билан ажратилади."},
+            {id: 22, category: "texnik", difficulty: "qiyin", question: "Коммутацион аппаратларнинг қўл билан бошқариладиган юритмаларига нима осилади?", options: ["Тақиқловчи шиорлар", "Фақат қулф", "Ҳеч нарса", "Фақат ёрлиқ"], correct: 0, explanation: "Тақиқловчи шиорлар осилади."},
+            {id: 23, category: "texnik", difficulty: "o'rta", question: "Ўчирилишлар амалга оширилганда қандай чоралар кўрилади?", options: ["Ўз-ўзидан ёки янглишиб оқибатда ёқилишига тўсқинлик қилувчи чоралар", "Фақат ўчириш", "Фақат ёқиш", "Ҳеч нарса"], correct: 0, explanation: "Ўз-ўзидан ёки янглишиб ёқилишига тўсқинлик қилувчи чоралар кўрилади."},
+            {id: 24, category: "texnik", difficulty: "qiyin", question: "Тўсиқларга нима осилади?", options: ["Хавфсизлик шиорлари", "Фақат қулф", "Ҳеч нарса", "Фақат ёрлиқ"], correct: 0, explanation: "Тўсиқларга хавфсизлик шиорлари осилади."},
+            {id: 25, category: "texnik", difficulty: "o'rta", question: "Одамларни электр ток билан жароҳатланишдан сақлаш мақсадида нима қилинади?", options: ["Ерга улаш зарур бўлган ток ўтказувчи қисмларни ерга улашдан олдин уларда кучланиш йўқлигини текшириш", "Фақат ерга улаш", "Фақат текшириш", "Ҳеч нарса"], correct: 0, explanation: "Ерга улашдан олдин кучланиш йўқлиги текширилади."},
+
+            // ========== ЭЛЕКТР АСОСЛАРИ (26-45) ==========
+            {id: 26, category: "asoslar", difficulty: "oson", question: "Электр токи деб нимага айтилади?", options: ["Ёпиқ занжир ичида зарядланган заррачаларнинг бир томонга тартибли ҳаракати", "Очиқ занжирдаги заррачалар ҳаракати", "Фақат электронлар ҳаракати", "Фақат протонлар ҳаракати"], correct: 0, explanation: "Электр токи - ёпиқ занжир ичида зарядланган заррачаларнинг бир томонга тартибли ҳаракати."},
+            {id: 27, category: "asoslar", difficulty: "oson", question: "Кучланиш деб нимага айтилади ва қандай белгиланади?", options: ["Икки нуқта орасидаги потенциаллар фарки, U ҳарфи билан белгиланади", "Бир нуқтадаги потенциал, V ҳарфи билан", "Ток кучи, I ҳарфи билан", "Қаршилик, R ҳарфи билан"], correct: 0, explanation: "Кучланиш - икки нуқта орасидаги потенциаллар фарки ва U ҳарфи билан белгиланади."},
+            {id: 28, category: "asoslar", difficulty: "oson", question: "Қаршилик нима ва қандай белгиланади?", options: ["Электр қаршилик - эркин электронлар тартибли ҳаракати давомида металл кристалл панжарасининг тўғнашуви, R ҳарфи билан", "Фақат ток кучи", "Фақат кучланиш", "Белгиланмайди"], correct: 0, explanation: "Қаршилик - электронларнинг ионлар билан тўғнашуви, R ҳарфи билан белгиланади."},
+            {id: 29, category: "asoslar", difficulty: "o'rta", question: "Ом қонуни нима ҳақида?", options: ["Ўтказгичдан ўтаётган ток кучи кучланишга тўғри, қаршиликка тескари пропорционал", "Ток кучи фақат қаршиликка боғлиқ", "Ток кучи фақат кучланишга боғлиқ", "Кучланиш ва қаршилик ўзаро боғлиқ эмас"], correct: 0, explanation: "Ом қонуни: I = U/R - ток кучланишга тўғри, қаршиликка тескари пропорционал."},
+            {id: 30, category: "asoslar", difficulty: "qiyin", question: "cos φ (қувват коэффициенти) нима?", options: ["Актив-индуктив юкламада ток кучланишдан φ бурчагига орқада қолади, ушбу бурчакнинг косинуси", "Фақат актив қувват нисбати", "Фақат реактив қувват нисбати", "Частота нисбати"], correct: 0, explanation: "cos φ - ток кучланишдан φ бурчагига орқада қолганда, ушбу бурчакнинг косинуси."},
+            {id: 31, category: "asoslar", difficulty: "oson", question: "Частота нима ва қандай ўлчанади?", options: ["Бир секундлик даврдаги тебранишлар сони, Гц билан ўлчанади", "Бир дақиқадаги тебранишлар сони", "Бир соатдаги тебранишлар сони", "Волт билан ўлчанади"], correct: 0, explanation: "Частота - бир секундлик даврдаги тебранишлар сони, Гц билан ўлчанади."},
+            {id: 32, category: "asoslar", difficulty: "oson", question: "Ўзбекистонда асосан қандай частотали ускуналар ишлатилади?", options: ["50 Гц", "60 Гц", "100 Гц", "25 Гц"], correct: 0, explanation: "Ўзбекистонда асосан 50 Гц частотали ускуналар ишлатилади."},
+            {id: 33, category: "asoslar", difficulty: "oson", question: "Разеткада нима бор - кучланишми ёки токми?", options: ["Икки нуқта орасидаги потенциаллар фарқи - кучланиш (220 Волт фаза кучланиши)", "Фақат ток бор", "Фақат қаршилик бор", "Ҳеч нарса йўқ"], correct: 0, explanation: "Разеткада кучланиш мавжуд (220 Волт). Ток фақат юклама уланганда оқади."},
+            {id: 34, category: "asoslar", difficulty: "o'rta", question: "Тўлиқ қувват формуласи қандай?", options: ["S = √(P² + Q²) = P / cos φ", "S = P + Q", "S = P × Q", "S = P - Q"], correct: 0, explanation: "Тўлиқ қувват: S = √(P² + Q²) = P / cos φ"},
+            {id: 35, category: "asoslar", difficulty: "o'rta", question: "Актив қувват формуласи (уч фазали)?", options: ["Pл = √3 × U × I × cos φ", "Pл = U × I", "Pл = √3 × U × I", "Pл = U × I × sin φ"], correct: 0, explanation: "Актив қувват (уч фазали): Pл = √3 × U × I × cos φ"},
+            {id: 36, category: "asoslar", difficulty: "qiyin", question: "Реактив қувват формуласи қандай?", options: ["Qл = √3 × U × I × sin φ", "Qл = U × I", "Qл = √3 × U × I", "Реактив қувват мавжуд эмас"], correct: 0, explanation: "Реактив қувват: Qл = √3 × U × I × sin φ"},
+            {id: 37, category: "asoslar", difficulty: "oson", question: "Электр энергияси нима?", options: ["Бир вақтнинг ўзида ҳосил қилиниши ва истеъмол қилиниши билан тавсифланадиган алоҳида турдаги товар", "Фақат ишлаб чиқариладиган маҳсулот", "Фақат истеъмол қилинадиган маҳсулот", "Омборда сақланадиган товар"], correct: 0, explanation: "Электр энергияси - бир вақтнинг ўзида ҳосил қилиниши ва истеъмол қилиниши билан тавсифланадиган товар."},
+            {id: 38, category: "asoslar", difficulty: "o'rta", question: "Ўзгармас ток деб нимага айтилади?", options: ["Қиймати ва йўналиши бўйича ўзгармайдиган ток", "Вақт бўйича ўзгарадиган ток", "Фақат кучланиш ўзгарадиган ток", "Фақат йўналиш ўзгарадиган ток"], correct: 0, explanation: "Ўзгармас ток - қиймати ва йўналиши бўйича ўзгармайдиган ток."},
+            {id: 39, category: "asoslar", difficulty: "o'rta", question: "Ўзгарувчан ток деб нимага айтилади?", options: ["Вақт бўйича ўзгарадиган ток", "Ўзгармайдиган ток", "Фақат кучланиш ўзгарадиган ток", "Фақат йўналиш ўзгарадиган ток"], correct: 0, explanation: "Ўзгарувчан ток - вақт бўйича ўзгарадиган ток."},
+            {id: 40, category: "asoslar", difficulty: "qiyin", question: "Ток кучи деб нимага айтилади ва қандай белгиланади?", options: ["Вақт бирлиги ичида ўтказгич кўндаланг кесим юзасидан оқиб ўтаётган заряд миқдори, I ҳарфи билан", "Фақат кучланиш", "Фақат қаршилик", "Белгиланмайди"], correct: 0, explanation: "Ток кучи - вақт бирлиги ичида оқиб ўтаётган заряд миқдори, I ҳарфи билан белгиланади."},
+            {id: 41, category: "asoslar", difficulty: "qiyin", question: "Инсон танасининг электр токига қаршилиги неча Ом деб қабул қилинган?", options: ["1000 Ом", "100 Ом", "10000 Ом", "500 Ом"], correct: 0, explanation: "Электр хавфсизлиги бўйича ҳисоблашда инсон танасининг қаршилиги 1000 Ом деб қабул қилинган."},
+            {id: 42, category: "asoslar", difficulty: "qiyin", question: "Инсон организми учун энг хавфли частота қанча?", options: ["50-500 Гц", "1-10 Гц", "1000-5000 Гц", "10000 Гц"], correct: 0, explanation: "Организм учун энг хавфлиси 50-500 Гц частотали электр токи."},
+            {id: 43, category: "asoslar", difficulty: "qiyin", question: "0.5-1.5 мА ток кучи инсонга қандай таъсир кўрсатади?", options: ["Сезиш бўсағаси - инсон буни сезади, ўзини олиб қоча олади", "Хавфли ток", "Ҳалок қиладиган ток", "Ҳеч қандай таъсир"], correct: 0, explanation: "0.5-1.5 мА - сезиш бўсағаси, инсон сезади ва ўзини олиб қоча олади."},
+            {id: 44, category: "asoslar", difficulty: "qiyin", question: "10-15 мА ли электр токи инсонга қандай таъсир кўрсатади?", options: ["Хавфли ток - бировнинг ёрдамисиз ток таъсиридан қутула олмайди", "Сезиш бўсағаси", "Ҳалок қиладиган ток", "Ҳеч қандай таъсир"], correct: 0, explanation: "10-15 мА - хавфли ток, бировнинг ёрдамисиз қутулиб бўлмайди."},
+            {id: 45, category: "asoslar", difficulty: "qiyin", question: "100-110 мА ли ток кучи инсонга қандай таъсир кўрсатади?", options: ["Ҳалок қиладиган ток - 3-4 минут қолган одам ҳалок бўлади", "Сезиш бўсағаси", "Хавфли ток", "Ҳеч қандай таъсир"], correct: 0, explanation: "100-110 мА - ҳалок қиладиган ток, 3-4 минутда ҳалок бўлади."},
+
+            // ========== УСКУНАЛАР (46-70) ==========
+            {id: 46, category: "uskunalar", difficulty: "oson", question: "Счетчик нимани ҳисоблайди?", options: ["Истеъмол қилинган актив ва реактив электр энергиясини", "Фақат кучланишни", "Фақат ток кучини", "Фақат частотани"], correct: 0, explanation: "Электр ҳисоблагичлар актив ва реактив электр энергиясини ҳисоблайди."},
+            {id: 47, category: "uskunalar", difficulty: "o'rta", question: "Бир фазали счетчикларнинг турлари қандай?", options: ["Индукцион ва электрон ҳисоблагичлар", "Фақат индукцион", "Фақат электрон", "Механик ва цифрли"], correct: 0, explanation: "Бир фазали счетчиклар индукцион ва электрон бўлади."},
+            {id: 48, category: "uskunalar", difficulty: "o'rta", question: "Уч фазали счетчикларнинг турлари ва уланиш усуллари?", options: ["Индукцион ва электрон, тўғридан-тўғри ва ток трансформатори орқали уланиш", "Фақат индукцион", "Фақат электрон", "Фақат тўғридан-тўғри уланиш"], correct: 0, explanation: "Уч фазали счетчиклар индукцион ва электрон, тўғридан-тўғри ва ток трансформатори орқали уланади."},
+            {id: 49, category: "uskunalar", difficulty: "o'rta", question: "Разрядникларнинг турлари ва вазифаси?", options: ["Вентилли ва трубали, чақмоқ ва кучланиш ошиб кетишидан ҳимоя қилади", "Фақат вентилли", "Фақат трубали", "Ҳимоя қилмайди"], correct: 0, explanation: "Вентилли ва трубали разрядниклар чақмоқ ва кучланиш ошиб кетишидан ҳимоя қилади."},
+            {id: 50, category: "uskunalar", difficulty: "o'rta", question: "Изоляторларнинг турлари қандай?", options: ["Паст ва юқори кучланишли (ТФ-20, ШФ-10, ПСД-70 ва ҳоказо)", "Фақат паст кучланишли", "Фақат юқори кучланишли", "Изоляторлар мавжуд эмас"], correct: 0, explanation: "Паст ва юқори кучланишли изоляторлар бўлади."},
+            {id: 51, category: "uskunalar", difficulty: "oson", question: "Трансформатор юкламаси қандай ўлчанади?", options: ["Амперметрлар ва ток ўлчов қисқичлари орқали", "Фақат кўз билан", "Фақат вольтметр билан", "Ўлчаш мумкин эмас"], correct: 0, explanation: "Трансформатор юкламаси амперметрлар ва ток ўлчов қисқичлари орқали ўлчанади."},
+            {id: 52, category: "uskunalar", difficulty: "o'rta", question: "Трансформатор мойи нима учун керак?", options: ["Изоляция ва совутиш вазифасини бажаради, ички ёйларни сўндириш учун ишлатилади", "Фақат чирой учун", "Фақат совутиш учун", "Мой шарт эмас"], correct: 0, explanation: "Трансформатор мойи изоляция ва совутиш вазифасини бажаради."},
+            {id: 53, category: "uskunalar", difficulty: "o'rta", question: "Таянчларнинг турлари қандай?", options: ["Оралиқ, бурчак, анкерли, тармоқланувчи; ёғоч, темир, темир-бетон", "Фақат ёғоч", "Фақат темир", "Таянчлар мавжуд эмас"], correct: 0, explanation: "Оралиқ, бурчак, анкерли, тармоқланувчи таянчлар; ёғоч, темир, темир-бетон."},
+            {id: 54, category: "uskunalar", difficulty: "o'rta", question: "Коммутация аппарати нима?", options: ["Электр занжирларини улаш-узиш ва ток ўтказиш учун мўлжалланган аппаратлар", "Фақат улаш учун", "Фақат узиш учун", "Аппарат мавжуд эмас"], correct: 0, explanation: "Коммутация аппаратлари - электр занжирларини улаш-узиш учун мўлжалланган."},
+            {id: 55, category: "uskunalar", difficulty: "qiyin", question: "Трансформатор қуввати қандай танланади?", options: ["Юкламага нисбатан, тўла қувватни ҳисоблаб (масалан 40 кВт юкламага 63 кВАли трансформатор)", "Ихтиёрий танланади", "Фақат нархга қараб", "Танлаш шарт эмас"], correct: 0, explanation: "Юкламага нисбатан куч трансформаторлари танланади."},
+            {id: 56, category: "uskunalar", difficulty: "qiyin", question: "Трансформатор пунктларида сақлагичлар қандай танланади?", options: ["Ток ўлчов қисқичлари орқали ўлчанади, номинал юкламанинг 80%дан ошмаслиги керак", "Ихтиёрий танланади", "Фақат кўз билан", "Танлаш шарт эмас"], correct: 0, explanation: "Сақлагичлар ток ўлчов қисқичлари орқали ўлчанади, 80%дан ошмаслиги керак."},
+            {id: 57, category: "uskunalar", difficulty: "qiyin", question: "0,4 кВли автомат қандай танланади?", options: ["Фидерлар сони ва юкламалари орқали аниқланади, 80%дан ошмаслиги керак", "Ихтиёрий танланади", "Фақат нархга қараб", "Танлаш шарт эмас"], correct: 0, explanation: "0,4 кВли фидерлар сони ва юкламалари орқали аниқланади, 80%дан ошмаслиги керак."},
+            {id: 58, category: "uskunalar", difficulty: "o'rta", question: "Ҳаво тармоқларида симлар қандай танланади?", options: ["Қобиқсиз алюмин, пўлат-алюмин, СИП; юклама миқдорига мос кесимда", "Фақат мис сим", "Фақат алюмин", "Ихтиёрий танланади"], correct: 0, explanation: "Қобиқсиз алюмин, пўлат-алюмин, СИП симлар ишлатилади."},
+            {id: 59, category: "uskunalar", difficulty: "qiyin", question: "Трансформатордаги йўқотишлар ва фазалар фарқи қандай аниқланади?", options: ["Ток ўлчов қисқичлари орқали, носимметрик юкламаларда энергия исрофи катта бўлади", "Кўз билан аниқланади", "Аниқлаш мумкин эмас", "Йўқотишлар мавжуд эмас"], correct: 0, explanation: "Носимметрик юкламаларда энергия исрофи катта бўлади."},
+            {id: 60, category: "uskunalar", difficulty: "qiyin", question: "Фазалар орасидаги фарқлар тўғри бўлмаганда нима бўлади?", options: ["Трансформатор қизийди, шикастланиши мумкин, энергия исрофи кўпаяди", "Ҳеч нарса бўлмайди", "Трансформатор яхши ишлайди", "Исроф камаяди"], correct: 0, explanation: "Фазалар орасидаги фарқлар тўғри бўлмаганда трансформатор қизийди ва шикастланишига олиб келади."},
+            {id: 61, category: "uskunalar", difficulty: "qiyin", question: "6-10 кВли ажратгичларнинг турлари ва шунт ўрнатиш муддати?", options: ["Ички ва ташқи (РВ, РЛНД); ЭТК бошлиғи ёзма фармойиши билан 7 кун муддатда", "Фақат ички", "Фақат ташқи", "Шунт ўрнатиш мумкин эмас"], correct: 0, explanation: "Ички ва ташқи ажратгичлар; шунт ўрнатишга 7 кун муддатда рухсат этилади."},
+            {id: 62, category: "uskunalar", difficulty: "o'rta", question: "АСКУЭ тизими нима?", options: ["Истеъмолчиларнинг электр энергия истеъмолини назорат қилиш, қарздорни масофадан ўчириб-улаш автоматлаштирилган тизими", "Фақат ҳисоблагич", "Фақат дисплей", "Тизим мавжуд эмас"], correct: 0, explanation: "АСКУЭ - истеъмолчиларнинг электр энергия истеъмолини назорат қилиш автоматлаштирилган тизими."},
+            {id: 63, category: "uskunalar", difficulty: "o'rta", question: "Кабелларнинг учлари қандай уланиши керак?", options: ["Кабел учликлари (наконечник) орқали уланиши лозим", "Оддий тугун билан", "Скотч билан", "Улаш шарт эмас"], correct: 0, explanation: "Кабелларнинг учлари кабел учликлари (наконечник) орқали уланиши лозим."},
+            {id: 64, category: "uskunalar", difficulty: "qiyin", question: "Трансформатор шпилкаларининг қизиши нимага таъсир кўрсатади?", options: ["Электр энергияси исрофини оширади, трансформатор ғалакларига таъсир кўрсатиб шикастланишига олиб келади", "Ҳеч нарсага таъсир қилмайди", "Исрофни камаяди", "Яхши таъсир кўрсатади"], correct: 0, explanation: "Шпилкаларининг қизиши энергия исрофини оширади ва трансформатор шикастланишига олиб келади."},
+            {id: 65, category: "uskunalar", difficulty: "qiyin", question: "Ҳаво тармоқларидаги кўп уламалар нимага таъсир кўрсатади?", options: ["Қаршиликнинг ошишига, энергия исрофининг ошишига (Жоул-Ленц қонуни: Q = I²Rt)", "Ҳеч нарсага таъсир қилмайди", "Исрофни камаяди", "Яхши таъсир кўрсатади"], correct: 0, explanation: "Қаршиликнинг ошишига, энергия исрофининг ошишига олиб келади."},
+            {id: 66, category: "uskunalar", difficulty: "qiyin", question: "Коммутация симларининг қизиши ва автоматларнинг юқори юкламада ишлаши нимага таъсир кўрсатади?", options: ["Электр энергияси исрофини оширади, коммутация ускуналари контактлари ишдан чиқишига олиб келади", "Ҳеч нарсага таъсир қилмайди", "Исрофни камаяди", "Яхши таъсир кўрсатади"], correct: 0, explanation: "Коммутация симларининг қизиши энергия исрофини оширади."},
+            {id: 67, category: "uskunalar", difficulty: "o'rta", question: "Трансформатор (КТП) ер сатҳидан қанча баландликда бўлиши керак?", options: ["10 кВли контактларигача бўлган масофа ер сатҳидан 2,5 метрдан кам бўлмаслиги керак", "1 метр", "5 метр", "Чеклов йўқ"], correct: 0, explanation: "10 кВли контактларигача бўлган масофа ер сатҳидан 2,5 метрдан кам бўлмаслиги керак."},
+            {id: 68, category: "uskunalar", difficulty: "o'rta", question: "Трансформатор мой сатҳи меъёри қандай аниқланади?", options: ["Ҳаво температурасини эътиборга олган ҳолда трансформаторнинг кенгайтиргич баки кўрсаткичлари орқали", "Кўз билан", "Ўлчаш мумкин эмас", "Меъёр мавжуд эмас"], correct: 0, explanation: "Мой сатҳи меъёри ҳаво температурасини эътиборга олган ҳолда кенгайтиргич баки кўрсаткичлари орқали аниқланади."},
+            {id: 69, category: "uskunalar", difficulty: "qiyin", question: "Трансформатор подстанциясини мукаммал таъмирлаш муддати ва ишлари?", options: ["6 йилда 1 марта капитал таъмирланади. КТПни тозалаш, бўяш, изоляторларни алмаштириш, ерга улаш контурини таъмирлаш ва ҳоказо", "Ҳар йили", "10 йилда", "Таъмирлаш шарт эмас"], correct: 0, explanation: "Трансформатор подстанциялари 6 йилда 1 марта капитал таъмирланади."},
+            {id: 70, category: "uskunalar", difficulty: "qiyin", question: "Трансформатор подстанциясини жорий таъмирлаш муддати ва ишлари?", options: ["Ҳар 3 йилда 1 марта. Кучланиш ва юкламаларни ўлчаш, мой қуйиш, контактларни тозалаш, сақлагичларни алмаштириш", "Ҳар йили", "10 йилда", "Таъмирлаш шарт эмас"], correct: 0, explanation: "Трансформатор подстанциялари ҳар 3 йилда 1 марта жорий таъмирланади."},
+
+            // ========== ХАВФСИЗЛИК (71-85) ==========
+            {id: 71, category: "xavfsizlik", difficulty: "oson", question: "Ҳаво тармоғига дарахт тегиб турса нима бўлади?", options: ["Энергия исрофи кўпаяди (дарахт орқали заминланиш)", "Энергия исрофи камаяди", "Ҳеч нарса бўлмайди", "Тармоқ яхши ишлайди"], correct: 0, explanation: "Ҳаво тармоғига дарахт тегиб турса, энергия исрофи кўпаяди."},
+            {id: 72, category: "xavfsizlik", difficulty: "qiyin", question: "Ҳаво тармоқларида нол бўлмаса нима бўлади?", options: ["Уланган ускуналарда ҳавфли фаза кучланиши (380 Волтгача) пайдо бўлади", "Ҳеч нарса бўлмайди", "Кучланиш камаяди", "Тармоқ яхши ишлайди"], correct: 0, explanation: "Ҳаво тармоқларида нол бўлмаса, уланган ускуналарда ҳавфли фаза кучланиши пайдо бўлади."},
+            {id: 73, category: "xavfsizlik", difficulty: "o'rta", question: "Ерга улаш ишлари нима учун амалга оширилади?", options: ["Хизмат кўрсатувчи ходимни ҳавфли кучланишга тегиб кетишидан сақлаш учун", "Чирой учун", "Шарт эмас", "Фақат расмиятчилик"], correct: 0, explanation: "Ерга улаш ҳимояловчи деб аталади, ходимни ҳавфли кучланишга тегиб кетишидан сақлайди."},
+            {id: 74, category: "xavfsizlik", difficulty: "o'rta", question: "10 кВли ҳаво тармоғининг габарити қанча бўлиши керак?", options: ["Энг пастки симдан ергача 6 метрдан кам бўлмаслиги керак", "3 метр", "10 метр", "Чеклов йўқ"], correct: 0, explanation: "10 кВли ҳаво тармоғининг габарити энг пастки симдан ергача 6 метрдан кам бўлмаслиги керак."},
+            {id: 75, category: "xavfsizlik", difficulty: "o'rta", question: "0,4 кВли ҳаво тармоғининг габарити қанча бўлиши керак?", options: ["Энг пастки симдан ергача 4,5 метрдан кам бўлмаслиги керак", "2 метр", "8 метр", "Чеклов йўқ"], correct: 0, explanation: "0,4 кВли ҳаво тармоғининг габарити энг пастки симдан ергача 4,5 метрдан кам бўлмаслиги керак."},
+            {id: 76, category: "xavfsizlik", difficulty: "o'rta", question: "10 кВ ҳаво тармоқларида фазалар орасидаги масофа қанча?", options: ["1,3 метр оралиғида бўлиши керак", "0,5 метр", "5 метр", "Чеклов йўқ"], correct: 0, explanation: "10 кВ ҳаво тармоқларида фазалар орасидаги масофа 1,3 метр оралиғида бўлиши керак."},
+            {id: 77, category: "xavfsizlik", difficulty: "o'rta", question: "10-0,4 кВли ҳаво тармоғи бир таянчда бўлса улар орасидаги масофа?", options: ["2 метрдан кам бўлмаслиги зарур", "0,5 метр", "5 метр", "Чеклов йўқ"], correct: 0, explanation: "10-0,4 кВли ҳаво тармоғи бир таянчда бўлса улар орасидаги масофа 2 метрдан кам бўлмаслиги зарур."},
+            {id: 78, category: "xavfsizlik", difficulty: "qiyin", question: "Ўлчов асбобларга қўйилган талаблар?", options: ["Аниқлик класси 2,0 дан ошмаслиги, пломбалар бўлиши, вақти-вақти билан қиёслашдан ўтказиш", "Ҳеч қандай талаб йўқ", "Фақат пломба шарт", "Фақат аниқлик шарт"], correct: 0, explanation: "Ўлчаш приборларининг аниқлик класси 2,0 дан ошмаслиги керак."},
+            {id: 79, category: "xavfsizlik", difficulty: "qiyin", question: "Асбобларнинг аниқлик класси деганда нима тушунилади?", options: ["Ўлчов асбобларининг рухсат этилган мусбат ва манфий аниқлик (+/-) хатоликлари", "Фақат мусбат хатолик", "Фақат манфий хатолик", "Хатолик мавжуд эмас"], correct: 0, explanation: "Ўлчов асбобларининг рухсат этилган мусбат ва манфий аниқлик (+/-) хатоликлари."},
+            {id: 80, category: "xavfsizlik", difficulty: "qiyin", question: "Ер улаш қаршилиги ПУЭ бўйича қанча Омдан ошмаслиги керак?", options: ["4 Ом", "10 Ом", "100 Ом", "1000 Ом"], correct: 0, explanation: "Ер улаш қаршилиги ПУЭ бўйича 4 Омдан ошмаслиги керак."},
+            {id: 81, category: "xavfsizlik", difficulty: "qiyin", question: "10 кВда мустақил ишлаш ҳуқуқига эга бўлиш учун қайси гуруҳ керак?", options: ["III гуруҳ", "I гуруҳ", "II гуруҳ", "V гуруҳ"], correct: 0, explanation: "10 кВда мустақил ишлаш учун III гуруҳ керак."},
+            {id: 82, category: "xavfsizlik", difficulty: "qiyin", question: "Диэлектрик қўлқоп қайси кучланишга чидамли бўлиши шарт?", options: ["6 кВ", "1 кВ", "10 кВ", "35 кВ"], correct: 0, explanation: "Диэлектрик қўлқоп 6 кВ кучланишга чидамли бўлиши шарт."},
+            {id: 83, category: "xavfsizlik", difficulty: "qiyin", question: "Сақлагичлар юклама токининг неча фоизидан ошмаслиги керак?", options: ["80%", "50%", "100%", "120%"], correct: 0, explanation: "Сақлагичлар юклама токининг 80%дан ошмаслиги керак."},
+            {id: 84, category: "xavfsizlik", difficulty: "qiyin", question: "Ноль симлар узилишига қарши неча ер улаш бўлиши керак?", options: ["3 та", "1 та", "5 та", "10 та"], correct: 0, explanation: "Ноль симлар узилишига қарши 3 та ер улаш бўлиши керак."},
+            {id: 85, category: "xavfsizlik", difficulty: "qiyin", question: "Ўлчов асбоблари қандай ҳолатда бўлиши шарт?", options: ["Текширилган, журналда қайд этилган", "Ҳеч қандай талаб йўқ", "Фақат янги бўлиши керак", "Фақат эски бўлиши керак"], correct: 0, explanation: "Ўлчов асбоблари текширилган, журналда қайд этилган бўлиши шарт."},
+
+            // ========== КАБЕЛЛАР (86-100+) ==========
+            {id: 86, category: "kabel", difficulty: "oson", question: "1,5 мм² мис сим 220В да қанча ток ўтказади?", options: ["19 А", "16 А", "27 А", "25 А"], correct: 0, explanation: "Жадвалга кўра: 1,5 мм² мис сим 220В да 19 А ток ўтказади ва 4,1 кВт қувватга эга."},
+            {id: 87, category: "kabel", difficulty: "oson", question: "2,5 мм² аlyumин сим 220В да қанча қувватга чидайди?", options: ["4,4 кВт", "5,9 кВт", "6,1 кВт", "12,5 кВт"], correct: 0, explanation: "Жадвалга кўра: 2,5 мм² аlyumин сим 220В да 20 А ток ва 4,4 кВт қувватга чидайди."},
+            {id: 88, category: "kabel", difficulty: "o'rta", question: "10 мм² мис сим 380В да қанча ток ўтказади?", options: ["50 А", "70 А", "75 А", "39 А"], correct: 0, explanation: "Жадвалга кўра: 10 мм² мис сим 380В да 50 А ток ва 33,0 кВт қувватга чидайди."},
+            {id: 89, category: "kabel", difficulty: "o'rta", question: "16 мм² аlyumин сим 380В да қанча қувватга чидайди?", options: ["36,3 кВт", "49,5 кВт", "30,6 кВт", "13,2 кВт"], correct: 0, explanation: "Жадвалга кўра: 16 мм² аlyumин сим 380В да 55 А ток ва 36,3 кВт қувватга чидайди."},
+            {id: 90, category: "kabel", difficulty: "qiyin", question: "35 мм² мис сим 220В ва 380В да қанча қувват фарқи бор?", options: ["46,2 кВт", "29,7 кВт", "75,9 кВт", "22,0 кВт"], correct: 0, explanation: "220В да: 29,7 кВт, 380В да: 75,9 кВт. Фарқ: 75,9 - 29,7 = 46,2 кВт"},
+            {id: 91, category: "kabel", difficulty: "qiyin", question: "120 мм² мис сим 380В да қанча ток ўтказади?", options: ["260 А", "300 А", "200 А", "230 А"], correct: 0, explanation: "Жадвалга кўра: 120 мм² мис сим 380В да 260 А ток ва 171,6 кВт қувватга чидайди."},
+            {id: 92, category: "kabel", difficulty: "oson", question: "6 мм² аlyumин сим 220В да қанча ток ўтказади?", options: ["36 А", "46 А", "30 А", "28 А"], correct: 0, explanation: "Жадвалга кўра: 6 мм² аlyumин сим 220В да 36 А ток ва 7,9 кВт қувватга чидайди."},
+            {id: 93, category: "kabel", difficulty: "o'rta", question: "50 мм² мис сим 220В да қанча қувватга чидайди?", options: ["38,5 кВт", "95,7 кВт", "72,6 кВт", "29,7 кВт"], correct: 0, explanation: "Жадвалга кўра: 50 мм² мис сим 220В да 175 А ток ва 38,5 кВт қувватга чидайди."},
+            {id: 94, category: "kabel", difficulty: "o'rta", question: "95 мм² аlyumин сим 380В да қанча ток ўтказади?", options: ["170 А", "200 А", "140 А", "110 А"], correct: 0, explanation: "Жадвалга кўра: 95 мм² аlyumин сим 380В да 170 А ток ва 112,2 кВт қувватга чидайди."},
+            {id: 95, category: "kabel", difficulty: "qiyin", question: "70 мм² мис сим 220В да қанча қувватга чидайди?", options: ["47,3 кВт", "118,8 кВт", "57,2 кВт", "36,3 кВт"], correct: 0, explanation: "Жадвалга кўра: 70 мм² мис сим 220В да 215 А ток ва 47,3 кВт қувватга чидайди."},
+            {id: 96, category: "kabel", difficulty: "qiyin", question: "25 мм² аlyumин сим 380В да қанча қувватга чидайди?", options: ["46,2 кВт", "59,4 кВт", "18,7 кВт", "36,3 кВт"], correct: 0, explanation: "Жадвалга кўра: 25 мм² аlyumин сим 380В да 70 А ток ва 46,2 кВт қувватга чидайди."},
+            {id: 97, category: "kabel", difficulty: "oson", question: "4 мм² мис сим 220В да қанча ток ўтказади?", options: ["38 А", "30 А", "28 А", "25 А"], correct: 0, explanation: "Жадвалга кўра: 4 мм² мис сим 220В да 38 А ток ва 8,3 кВт қувватга чидайди."},
+            {id: 98, category: "kabel", difficulty: "oson", question: "10 мм² аlyumин сим 220В да қанча қувватга чидайди?", options: ["11,0 кВт", "25,7 кВт", "7,9 кВт", "22,0 кВт"], correct: 0, explanation: "Жадвалга кўра: 10 мм² аlyumин сим 220В да 50 А ток ва 11,0 кВт қувватга чидайди."},
+            {id: 99, category: "kabel", difficulty: "o'rta", question: "120 мм² аlyumин сим 220В да қанча ток ўтказади?", options: ["230 А", "200 А", "260 А", "170 А"], correct: 0, explanation: "Жадвалга кўра: 120 мм² аlyumин сим 220В да 230 А ток ва 50,6 кВт қувватга чидайди."},
+            {id: 100, category: "kabel", difficulty: "o'rta", question: "16 мм² мис сим 380В да қанча қувватга чидайди?", options: ["49,5 кВт", "18,7 кВт", "36,3 кВт", "13,2 кВт"], correct: 0, explanation: "Жадвалга кўра: 16 мм² мис сим 380В да 75 А ток ва 49,5 кВт қувватга чидайди."}
+        ];
+
+        // ============================================
+        // APPLICATION LOGIC
+        // ============================================
+        const app = {
+            state: {
+                currentScreen: 'landing-screen',
+                questions: [],
+                currentIndex: 0,
+                answers: [],
+                score: 0,
+                userName: '',
+                startTime: null,
+                timerInterval: null,
+                timeLimit: 0
+            },
+
+            init() {
+                updateFooterDate();
+                this.updateTotalQuestionsDisplay();
+                this.updateQuestionCount();
+                this.loadFromStorage();
+                this.bindEvents();
+            },
+
+            bindEvents() {
+                document.addEventListener('keydown', (e) => {
+                    if (this.state.currentScreen === 'test-screen') {
+                        if (e.key === 'ArrowRight' || e.key === 'Enter') this.nextQuestion();
+                        if (e.key === 'ArrowLeft') this.prevQuestion();
+                        if (['1','2','3','4'].includes(e.key)) {
+                            this.selectOption(parseInt(e.key) - 1);
+                        }
+                    }
+                });
+            },
+
+            loadFromStorage() {
+                try {
+                    const saved = localStorage.getItem('mjElectroTest');
+                    if (saved) console.log('Results loaded');
+                } catch (e) { console.warn('Storage unavailable'); }
+            },
+
+            saveToStorage(data) {
+                try { localStorage.setItem('mjElectroTest', JSON.stringify(data)); }
+                catch (e) { console.warn('Storage unavailable'); }
+            },
+
+            navigate(screenId) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(screenId).classList.add('active');
+                this.state.currentScreen = screenId;
+
+                if (screenId === 'test-screen') {
+                    document.getElementById('timer').style.display = 'block';
+                } else {
+                    document.getElementById('timer').style.display = 'none';
+                    this.stopTimer();
+                }
+            },
+
+            updateQuestionCount() {
+                const categories = Array.from(document.querySelectorAll('#settings-screen input[type="checkbox"]:checked')).map(cb => cb.value);
+                const filtered = questionBank.filter(q => categories.includes(q.category));
+                const count = filtered.length;
+
+                document.getElementById('available-questions').textContent = count;
+
+                const select = document.getElementById('question-count');
+                select.innerHTML = '';
+
+                [10,20,30,50].forEach(opt => {
+                    if (opt <= count) {
+                        const o = document.createElement('option');
+                        o.value = opt; o.textContent = `${opt} ta savol`;
+                        select.appendChild(o);
+                    }
+                });
+
+                const all = document.createElement('option');
+                all.value = count; all.textContent = `Barcha ${count} ta savol`;
+                select.appendChild(all);
+
+                if (count === 0) this.showToast('Kamida 1 ta kategoriya tanlang!', 'warning');
+            },
+
+            updateTotalQuestionsDisplay() {
+                const total = questionBank.length;
+                document.getElementById('total-questions-display').textContent = total;
+                document.getElementById('total-questions-count').textContent = total;
+            },
+
+            startTest() {
+                const categories = Array.from(document.querySelectorAll('#settings-screen input[type="checkbox"]:checked')).map(cb => cb.value);
+                const count = parseInt(document.getElementById('question-count').value);
+                this.state.timeLimit = parseInt(document.getElementById('time-limit').value);
+                this.state.userName = document.getElementById('user-name').value.trim() || 'Noma\'lum';
+
+                if (categories.length === 0) { this.showToast('Kamida 1 ta kategoriya tanlang!', 'error'); return; }
+
+                let filtered = questionBank.filter(q => categories.includes(q.category));
+                if (count > filtered.length) { this.showToast(`Faqat ${filtered.length} ta savol mavjud!`, 'warning'); return; }
+
+                filtered = this.shuffleArray(filtered);
+                this.state.questions = filtered.slice(0, Math.min(count, filtered.length));
+                this.state.answers = new Array(this.state.questions.length).fill(null);
+                this.state.currentIndex = 0;
+                this.state.score = 0;
+                this.state.startTime = Date.now();
+
+                if (this.state.timeLimit > 0) this.startTimer(this.state.timeLimit);
+                this.renderQuestion();
+                this.navigate('test-screen');
+                this.showToast('Test boshlandi! Omad!', 'success');
+            },
+
+            shuffleArray(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            },
+
+            startTimer(seconds) {
+                this.stopTimer();
+                let rem = seconds;
+                const update = () => {
+                    const m = Math.floor(rem/60), s = rem%60;
+                    const el = document.getElementById('timer');
+                    el.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                    if (rem <= 60) el.classList.add('warning');
+                    if (rem <= 0) { this.finishTest(); return; }
+                    rem--;
+                };
+                update();
+                this.state.timerInterval = setInterval(update, 1000);
+            },
+
+            stopTimer() {
+                if (this.state.timerInterval) {
+                    clearInterval(this.state.timerInterval);
+                    this.state.timerInterval = null;
+                }
+                document.getElementById('timer').classList.remove('warning');
+            },
+
+            renderQuestion() {
+                const q = this.state.questions[this.state.currentIndex];
+                const cat = {tashkiliy:'Tashkiliy',texnik:'Texnik',asoslar:'Asoslar',uskunalar:'Uskunalar',xavfsizlik:'Xavfsizlik',kabel:'Kabellar'};
+
+                document.getElementById('question-container').innerHTML = `
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span class="question-number">#${this.state.currentIndex+1}</span>
+                            <span class="category-badge category-${q.category}">${cat[q.category]}</span>
+                        </div>
+                        <div class="question-text">${this.escapeHtml(q.question)}</div>
+                        <div class="options-grid">
+                            ${q.options.map((opt,i) => `
+                                <div class="option-card ${this.state.answers[this.state.currentIndex]===i?'selected':''}" onclick="app.selectOption(${i})">
+                                    <span class="option-letter">${String.fromCharCode(65+i)}</span>
+                                    <span>${this.escapeHtml(opt)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="explanation ${this.state.answers[this.state.currentIndex]!==null?'show':''}">
+                            <strong style="color:var(--accent-cyan)">💡 Izoh:</strong> ${this.escapeHtml(q.explanation)}
+                        </div>
+                    </div>`;
+
+                const p = ((this.state.currentIndex+1)/this.state.questions.length)*100;
+                document.getElementById('progress-fill').style.width = `${p}%`;
+                document.getElementById('progress-text').textContent = `Savol ${this.state.currentIndex+1} / ${this.state.questions.length}`;
+                document.getElementById('score-text').textContent = `Ball: ${this.state.score}`;
+
+                document.getElementById('prev-btn').disabled = this.state.currentIndex===0;
+                if (this.state.currentIndex === this.state.questions.length-1) {
+                    document.getElementById('next-btn').style.display='none';
+                    document.getElementById('finish-btn').style.display='inline-flex';
+                } else {
+                    document.getElementById('next-btn').style.display='inline-flex';
+                    document.getElementById('finish-btn').style.display='none';
+                }
+            },
+
+            selectOption(idx) {
+                if (this.state.answers[this.state.currentIndex]!==null) return;
+                this.state.answers[this.state.currentIndex] = idx;
+                const q = this.state.questions[this.state.currentIndex];
+
+                if (idx===q.correct) { this.state.score++; document.querySelectorAll('.option-card')[idx].classList.add('correct'); }
+                else { document.querySelectorAll('.option-card')[idx].classList.add('incorrect'); document.querySelectorAll('.option-card')[q.correct].classList.add('correct'); }
+
+                document.querySelectorAll('.option-card').forEach((c,i)=>{ c.style.pointerEvents='none'; if(i===q.correct) c.classList.add('correct'); });
+                document.getElementById('explanation').classList.add('show');
+                document.getElementById('score-text').textContent = `Ball: ${this.state.score}`;
+            },
+
+            nextQuestion() { if (this.state.currentIndex < this.state.questions.length-1) { this.state.currentIndex++; this.renderQuestion(); } },
+            prevQuestion() { if (this.state.currentIndex > 0) { this.state.currentIndex--; this.renderQuestion(); } },
+
+            async finishTest() {
+                this.stopTimer();
+                const total = Math.floor((Date.now()-this.state.startTime)/1000);
+                const correct = this.state.score, wrong = this.state.questions.length-correct;
+                const pct = Math.round((correct/this.state.questions.length)*100);
+
+                const results = { userName:this.state.userName, date:new Date().toISOString(), totalQuestions:this.state.questions.length, correctAnswers:correct, wrongAnswers:wrong, percentage:pct, totalTime:total, answers:this.state.answers, questions:this.state.questions };
+                this.saveToStorage(results);
+
+                document.getElementById('result-user-name').textContent = `${this.state.userName} | ${new Date().toLocaleDateString('uz-UZ')}`;
+                document.getElementById('total-questions').textContent = this.state.questions.length;
+                document.getElementById('correct-answers').textContent = correct;
+                document.getElementById('wrong-answers').textContent = wrong;
+                document.getElementById('percentage').textContent = `${pct}%`;
+
+                const cat = {tashkiliy:'Tashkiliy',texnik:'Texnik',asoslar:'Asoslar',uskunalar:'Uskunalar',xavfsizlik:'Xavfsizlik',kabel:'Kabellar'};
+                document.getElementById('detailed-results').innerHTML = this.state.questions.map((q,i)=>{
+                    const ua=this.state.answers[i], ok=ua===q.correct;
+                    return `<div class="glass-card" style="margin-bottom:1rem;padding:1rem"><div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;flex-wrap:wrap;gap:0.5rem"><strong style="color:var(--accent-cyan)">Savol ${i+1}</strong><span class="category-badge category-${q.category}">${cat[q.category]}</span></div><p style="margin-bottom:0.5rem">${this.escapeHtml(q.question)}</p><p style="color:${ok?'var(--accent-green)':'#ff1744'}"><strong>Sizning javob:</strong> ${ua!==null?q.options[ua]:'Javob berilmadi'}</p>${!ok?`<p style="color:var(--accent-green)"><strong>To'g'ri javob:</strong> ${q.options[q.correct]}</p>`:''}<p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.5rem"><strong>Izoh:</strong> ${this.escapeHtml(q.explanation)}</p></div>`;
+                }).join('');
+
+                this.navigate('results-screen');
+                this.showToast(`Test tugallandi! Natija: ${pct}%`, 'success');
+            },
+
+            escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; },
+
+            showToast(msg, type='success') {
+                const t = document.getElementById('toast');
+                t.textContent = msg; t.className = `toast ${type} show`;
+                setTimeout(()=>t.classList.remove('show'), 3000);
+            },
+
+            async exportPDF() {
+                try {
+                    this.showToast('PDF tayyorlanmoqda...', 'warning');
+                    const pc = document.getElementById('print-container');
+                    const cat = {tashkiliy:'Tashkiliy',texnik:'Texnik',asoslar:'Asoslar',uskunalar:'Uskunalar',xavfsizlik:'Xavfsizlik',kabel:'Kabellar'};
+
+                    pc.innerHTML = `<div style="font-family:Arial,sans-serif;padding:40px;max-width:800px;margin:0 auto;background:white;color:black">
+                        <div style="text-align:center;margin-bottom:40px;border-bottom:3px solid #00d4ff;padding-bottom:20px">
+                            <h1 style="color:#00d4ff;font-size:28px;margin-bottom:10px">⚡ MJ PLATFORM</h1>
+                            <h2 style="color:#333;font-size:20px;margin-bottom:10px">Test Natijalari</h2>
+                            <p style="color:#666;font-size:14px">${document.getElementById('result-user-name').textContent}</p>
+                            <p style="color:#666;font-size:14px">Sana: ${new Date().toLocaleDateString('uz-UZ',{year:'numeric',month:'long',day:'numeric'})}</p>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:40px">
+                            <div style="text-align:center;padding:20px;background:#f8f9fa;border-radius:10px"><div style="font-size:32px;font-weight:bold;color:#00d4ff">${this.state.questions.length}</div><div style="color:#666;font-size:12px;margin-top:5px">Jami Savollar</div></div>
+                            <div style="text-align:center;padding:20px;background:#d4edda;border-radius:10px"><div style="font-size:32px;font-weight:bold;color:#28a745">${this.state.score}</div><div style="color:#666;font-size:12px;margin-top:5px">To'g'ri Javoblar</div></div>
+                            <div style="text-align:center;padding:20px;background:#f8d7da;border-radius:10px"><div style="font-size:32px;font-weight:bold;color:#dc3545">${this.state.questions.length-this.state.score}</div><div style="color:#666;font-size:12px;margin-top:5px">Xato Javoblar</div></div>
+                            <div style="text-align:center;padding:20px;background:#fff3cd;border-radius:10px"><div style="font-size:32px;font-weight:bold;color:#ffc107">${Math.round((this.state.score/this.state.questions.length)*100)}%</div><div style="color:#666;font-size:12px;margin-top:5px">Foiz</div></div>
+                        </div>
+                        <div style="margin-bottom:30px">
+                            <h3 style="color:#00d4ff;font-size:18px;margin-bottom:20px;border-bottom:2px solid #00d4ff;padding-bottom:10px">📊 Batafsil Natijalar</h3>
+                            ${this.state.questions.map((q,i)=>{const ua=this.state.answers[i],ok=ua===q.correct;return `<div style="margin-bottom:25px;padding:20px;border:1px solid #ddd;border-radius:10px;page-break-inside:avoid"><div style="display:flex;justify-content:space-between;margin-bottom:15px;flex-wrap:wrap;gap:10px"><strong style="color:#00d4ff;font-size:14px">Savol ${i+1}</strong><span style="background:#e7f3ff;color:#0066cc;padding:4px 12px;border-radius:15px;font-size:12px">${cat[q.category]}</span></div><p style="margin-bottom:15px;font-weight:600;color:#333;line-height:1.5">${this.escapeHtml(q.question)}</p><p style="color:${ok?'#28a745':'#dc3545'};margin-bottom:10px"><strong>Sizning javob:</strong> ${ua!==null?this.escapeHtml(q.options[ua]):'Javob berilmadi'}</p>${!ok?`<p style="color:#28a745;margin-bottom:10px"><strong>To'g'ri javob:</strong> ${this.escapeHtml(q.options[q.correct])}</p>`:''}<p style="color:#666;font-size:13px;margin-top:15px;padding:15px;background:#e7f3ff;border-left:4px solid #00d4ff;border-radius:0 8px 8px 0"><strong>💡 Izoh:</strong> ${this.escapeHtml(q.explanation)}</p></div>`}).join('')}
+                        </div>
+                        <div style="text-align:center;margin-top:40px;padding-top:20px;border-top:2px solid #ddd;color:#666;font-size:12px">
+                            <p>© ${new Date().getFullYear()} MJ Dasturchi | Elektriklar Uchun Professional Platforma</p>
+                            <p>Offline Test Tizimi v3.0 | Barcha huquqlar himoyalangan</p>
+                            <p>Chop etilgan sana: ${new Date().toLocaleDateString('uz-UZ',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})}</p>
+                        </div>
+                    </div>`;
+
+                    if (isMobile()) {
+                        document.querySelector('.container').style.display='none'; pc.style.display='block';
+                        setTimeout(()=>{ window.print(); setTimeout(()=>{ pc.style.display='none'; document.querySelector('.container').style.display='block'; pc.innerHTML=''; this.showToast('PDF tayyor! Chop qilish oynasidan saqlang', 'success'); },1000); },500);
+                    } else {
+                        document.querySelector('.container').style.display='none'; pc.style.display='block';
+                        window.print(); setTimeout(()=>{ pc.style.display='none'; document.querySelector('.container').style.display='block'; pc.innerHTML=''; },1000);
+                    }
+                } catch(e) { console.error('PDF Error:',e); this.showToast('PDF eksportda xatolik!', 'error'); }
+            },
+
+            async exportWord() {
+                try {
+                    this.showToast('Word fayl tayyorlanmoqda...', 'warning');
+                    const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'></head><body style="font-family:Arial,sans-serif;padding:20px;color:black"><h1 style="text-align:center;color:#00d4ff">Test Natijalari - MJ Platform</h1><p><strong>Ism:</strong> ${this.state.userName}</p><p><strong>Sana:</strong> ${new Date().toLocaleDateString('uz-UZ')}</p><p><strong>Jami savollar:</strong> ${this.state.questions.length}</p><p><strong>To\'g\'ri javoblar:</strong> ${this.state.score}</p><p><strong>Foiz:</strong> ${Math.round((this.state.score/this.state.questions.length)*100)}%</p><hr><h2>Batafsil Natijalar:</h2>`;
+
+                    let content = '';
+                    this.state.questions.forEach((q,i)=>{const ua=this.state.answers[i],ok=ua===q.correct;content+=`<div style="margin-bottom:20px;border:1px solid #ddd;padding:10px;page-break-inside:avoid"><p><strong>Savol ${i+1}:</strong> ${this.escapeHtml(q.question)}</p><p><strong>Sizning javob:</strong> ${ua!==null?this.escapeHtml(q.options[ua]):'Javob berilmadi'}</p>${!ok?`<p><strong>To\'g\'ri javob:</strong> ${this.escapeHtml(q.options[q.correct])}</p>`:''}<p><strong>Izoh:</strong> ${this.escapeHtml(q.explanation)}</p></div>`;});
+
+                    const footer = `<div style="text-align:center;margin-top:40px;padding-top:20px;border-top:2px solid #ddd;color:#666;font-size:12px"><p>© ${new Date().getFullYear()} MJ Dasturchi | Elektriklar Uchun Professional Platforma</p><p>Offline Test Tizimi v3.0</p></div></body></html>`;
+
+                    const blob = new Blob([header+content+footer], {type:'application/msword;charset=utf-8'});
+                    const fn = `MJ_Test_${this.state.userName.replace(/\s+/g,'_')}_${Date.now()}.doc`;
+
+                    await downloadFile(blob, fn);
+                    this.showToast('Word fayl yuklandi! Fayllar ilovasidan oching', 'success');
+                } catch(e) { console.error('Word Error:',e); this.showToast('Word eksportda xatolik!', 'error'); }
+            },
+
+            async exportJSON() {
+                try {
+                    this.showToast('JSON fayl tayyorlanmoqda...', 'warning');
+                    const data = { platform:'MJ Developer Platform', userName:this.state.userName, date:new Date().toISOString(), results:{totalQuestions:this.state.questions.length,correctAnswers:this.state.score,percentage:Math.round((this.state.score/this.state.questions.length)*100)}, questions:this.state.questions, answers:this.state.answers };
+                    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json;charset=utf-8'});
+                    const fn = `MJ_Backup_${this.state.userName.replace(/\s+/g,'_')}_${Date.now()}.json`;
+                    await downloadFile(blob, fn);
+                    this.showToast('JSON fayl yuklandi! Fayllar ilovasidan oching', 'success');
+                } catch(e) { console.error('JSON Error:',e); this.showToast('JSON eksportda xatolik!', 'error'); }
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => { app.init(); console.log('MJ Platform initialized'); console.log('Mobile:', isMobile()); console.log('Questions:', questionBank.length); });
+        if ('serviceWorker' in navigator) console.log('Service Worker supported - offline ready');
+    </script>
+</body>
+</html>
